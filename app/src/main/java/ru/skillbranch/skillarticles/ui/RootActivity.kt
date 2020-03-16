@@ -3,10 +3,9 @@ package ru.skillbranch.skillarticles.ui
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
-import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.get
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_root.*
 import kotlinx.android.synthetic.main.layout_bottombar.*
@@ -17,6 +16,8 @@ import ru.skillbranch.skillarticles.viewmodels.ArticleState
 import ru.skillbranch.skillarticles.viewmodels.ArticleViewModel
 import ru.skillbranch.skillarticles.viewmodels.Notify
 import ru.skillbranch.skillarticles.viewmodels.ViewModelFactory
+
+// TODO: not full scrolling
 
 class RootActivity : AppCompatActivity() {
 
@@ -37,7 +38,7 @@ class RootActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        // TODO try without it
+        // Set up logo
         val logo = if (toolbar.childCount > 2) toolbar.getChildAt(2) as ImageView else null
         logo?.scaleType = ImageView.ScaleType.CENTER_CROP
         // Check toolbar imports
@@ -66,11 +67,13 @@ class RootActivity : AppCompatActivity() {
         val vmFactory = ViewModelFactory("0")
         viewModel = ViewModelProvider(this, vmFactory).get(ArticleViewModel::class.java)
 
+        // Subscribe on article state
         viewModel.observeState(this) {
             renderUI(it)
             setupToolbar()
         }
 
+        // Subscribe on notifications
         viewModel.observeNotifications(this) {
             renderNotifications(it)
         }
@@ -88,7 +91,7 @@ class RootActivity : AppCompatActivity() {
         // Bind submenu views
         switch_mode.isChecked = data.isDarkMode
         delegate.localNightMode =
-            if (data.isDarkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+                if (data.isDarkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
         if (data.isBigText) {
             tv_text_content.textSize = 18f
             btn_text_up.isChecked = true
@@ -101,7 +104,7 @@ class RootActivity : AppCompatActivity() {
 
         // Bind content
         tv_text_content.text =
-            if (data.isLoadingContent) "Loading..." else data.content.first() as String
+                if (data.isLoadingContent) "Loading..." else data.content.first() as String
 
         // Bind toolbar
         toolbar.title = data.title ?: "Skill Articles"
@@ -111,9 +114,11 @@ class RootActivity : AppCompatActivity() {
 
     private fun renderNotifications(notify: Notify) {
         val snackbar = Snackbar.make(coordinator_container, notify.message, Snackbar.LENGTH_LONG)
+                .apply { anchorView = bottombar }
 
         when (notify) {
-            is Notify.TextMessage -> { /* Nothing */ }
+            is Notify.TextMessage -> { /* Nothing */
+            }
             is Notify.ActionMessage -> {
                 snackbar.setActionTextColor(getColor(R.color.color_accent_dark))
                 snackbar.setAction(notify.actionLabel) {
@@ -121,7 +126,7 @@ class RootActivity : AppCompatActivity() {
                 }
             }
             is Notify.ErrorMessage -> {
-                with (snackbar) {
+                with(snackbar) {
                     setBackgroundTint(getColor(R.color.design_default_color_error))
                     setTextColor(getColor(android.R.color.white))
                     setActionTextColor(getColor(android.R.color.white))

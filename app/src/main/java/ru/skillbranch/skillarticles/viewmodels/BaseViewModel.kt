@@ -9,7 +9,7 @@ abstract class BaseViewModel<T>(initState: T) : ViewModel() {
     val notifications = MutableLiveData<Event<Notify>>()
 
     /***
-     * Инициализация начального состояния аргументом конструктоа, и объявления состояния как
+     * Инициализация начального состояния аргументом конструктора, и объявления состояния как
      * MediatorLiveData - медиатор исспользуется для того чтобы учитывать изменяемые данные модели
      * и обновлять состояние ViewModel исходя из полученных данных
      */
@@ -79,6 +79,7 @@ abstract class BaseViewModel<T>(initState: T) : ViewModel() {
 
 }
 
+// TODO study
 class ViewModelFactory(private val params: String) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ArticleViewModel::class.java)) {

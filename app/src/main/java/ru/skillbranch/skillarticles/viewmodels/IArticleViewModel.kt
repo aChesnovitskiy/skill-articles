@@ -26,7 +26,6 @@ interface IArticleViewModel {
      */
     fun handleNightMode()
 
-
     /**
      * Обработка нажатия на btn_text_up (увеличение шрифта текста)
      * необходимо увеличить шрифт до значения 18

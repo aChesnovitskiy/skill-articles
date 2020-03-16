@@ -17,6 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:elevation="@dimen/elevation_normal_4"
+            style="@style/ArticleToolbar"
             app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
             app:logo="@drawable/logo_placeholder"
             app:subtitle="@string/loading_with_dots"
@@ -46,6 +47,7 @@
         android:layout_marginEnd="@dimen/spacing_small_8"
         android:layout_marginBottom="@dimen/spacing_small_8"
         android:theme="@style/ArticleBarsTheme"
+        style="@style/ArticleToolbar"
         app:layout_dodgeInsetEdges="bottom"
         android:visibility="gone"
         tools:visibility="visible" />

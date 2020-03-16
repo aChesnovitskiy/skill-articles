@@ -7,6 +7,8 @@ import kotlinx.coroutines.*
 import ru.skillbranch.skillarticles.R
 import java.util.*
 
+/* Mocking data sources */
+
 object LocalDataHolder {
     private var isDelay = true
 
@@ -18,7 +20,6 @@ object LocalDataHolder {
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val settings = MutableLiveData(AppSettings())
-
 
     fun findArticle(articleId: String): LiveData<ArticleData?> {
         GlobalScope.launch {

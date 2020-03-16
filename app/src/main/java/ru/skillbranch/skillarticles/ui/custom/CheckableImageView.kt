@@ -10,7 +10,7 @@ class CheckableImageView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : ImageView(context, attrs, defStyleAttr), Checkable, View.OnClickListener {
+) : androidx.appcompat.widget.AppCompatImageView(context, attrs, defStyleAttr), Checkable, View.OnClickListener {
     private var checked = false
 
     companion object {
@@ -21,6 +21,7 @@ class CheckableImageView @JvmOverloads constructor(
         setOnClickListener(this)
     }
 
+    // TODO watch video
     override fun onCreateDrawableState(extraSpace: Int): IntArray {
         val drawableState = super.onCreateDrawableState(extraSpace + 1)
         if (isChecked) View.mergeDrawableStates(drawableState, CHECKED_STATE_SET)
