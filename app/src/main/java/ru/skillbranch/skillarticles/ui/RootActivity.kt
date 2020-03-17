@@ -2,8 +2,11 @@ package ru.skillbranch.skillarticles.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.Menu
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
@@ -22,6 +25,8 @@ import ru.skillbranch.skillarticles.viewmodels.ViewModelFactory
 class RootActivity : AppCompatActivity() {
 
     private lateinit var viewModel: ArticleViewModel
+    private var isSearchMode: Boolean = false
+    private var searchQuery: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +37,41 @@ class RootActivity : AppCompatActivity() {
         setupSubmenu()
 
         setupViewModel()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_search, menu)
+
+        val searchItem = menu?.findItem(R.id.action_search)
+        val searchView = searchItem?.actionView as SearchView
+
+        if (isSearchMode) searchItem.expandActionView()
+        searchQuery?.let { searchView.setQuery(searchQuery, true) }
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                viewModel.handleSearch(query)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.handleSearch(newText)
+                return true
+            }
+        })
+
+        // Check if search is active
+        searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                Log.d("My_RootActivity", "Search is open")
+                viewModel.handleSearchMode(true)
+            } else {
+                Log.d("My_RootActivity", "Search is close")
+                viewModel.handleSearchMode(false)
+            }
+        }
+
+        return super.onCreateOptionsMenu(menu)
     }
 
     private fun setupToolbar() {
@@ -70,7 +110,7 @@ class RootActivity : AppCompatActivity() {
         // Subscribe on article state
         viewModel.observeState(this) {
             renderUI(it)
-            setupToolbar()
+//            setupToolbar() TODO delete if this is will not be need in further. It cause error while search (maybe add check of search mode to logo set up)
         }
 
         // Subscribe on notifications
@@ -110,6 +150,10 @@ class RootActivity : AppCompatActivity() {
         toolbar.title = data.title ?: "Skill Articles"
         toolbar.subtitle = data.category ?: "Loading..."
         if (data.categoryIcon != null) toolbar.logo = getDrawable(data.categoryIcon as Int)
+
+        // Bind search
+        isSearchMode = data.isSearch
+        searchQuery = data.searchQuery
     }
 
     private fun renderNotifications(notify: Notify) {

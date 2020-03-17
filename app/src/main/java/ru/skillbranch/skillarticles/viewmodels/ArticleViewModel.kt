@@ -119,28 +119,11 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
     }
 
     override fun handleSearchMode(isSearch: Boolean) {
-        TODO("Not yet implemented")
+        updateState { it.copy(isSearch = isSearch) }
     }
 
     override fun handleSearch(query: String?) {
-        TODO("Not yet implemented")
-    }
-
-    // TODO why this functions?
-    fun hideMenu() {
-        updateState { it.copy(isShowMenu = false) }
-    }
-
-    fun showMenu() {
-        updateState { it.copy(isShowMenu = true) }
-    }
-
-    fun handleSearchQuery(query: String?) {
         updateState { it.copy(searchQuery = query) }
-    }
-
-    fun handleIsSearch(isSearch: Boolean) {
-        updateState { it.copy(isSearch = isSearch) }
     }
 }
 
