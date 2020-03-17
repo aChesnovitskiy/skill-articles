@@ -17,6 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:elevation="@dimen/elevation_normal_4"
+            android:theme="@style/ArticleBarsTheme"
             style="@style/ArticleToolbar"
             app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
             app:logo="@drawable/logo_placeholder"

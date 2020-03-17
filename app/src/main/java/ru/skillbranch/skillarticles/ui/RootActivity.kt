@@ -80,13 +80,13 @@ class RootActivity : AppCompatActivity() {
     }
 
     private fun renderUI(data: ArticleState) {
-        // Bind submenu state
-        btn_settings.isChecked = data.isShowMenu
-        if (data.isShowMenu) submenu.open() else submenu.close()
-
         // Bind personal article data
         btn_like.isChecked = data.isLike
         btn_bookmark.isChecked = data.isBookmark
+
+        // Bind submenu state
+        btn_settings.isChecked = data.isShowMenu
+        if (data.isShowMenu) submenu.open() else submenu.close()
 
         // Bind submenu views
         switch_mode.isChecked = data.isDarkMode

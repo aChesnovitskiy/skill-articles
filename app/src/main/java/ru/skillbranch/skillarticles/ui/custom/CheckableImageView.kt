@@ -21,7 +21,7 @@ class CheckableImageView @JvmOverloads constructor(
         setOnClickListener(this)
     }
 
-    // TODO watch video
+    // TODO try without +1 and also play with ripple and tint colors
     override fun onCreateDrawableState(extraSpace: Int): IntArray {
         val drawableState = super.onCreateDrawableState(extraSpace + 1)
         if (isChecked) View.mergeDrawableStates(drawableState, CHECKED_STATE_SET)
