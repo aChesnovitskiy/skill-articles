@@ -7,7 +7,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.material.shape.MaterialShapeDrawable
 import ru.skillbranch.skillarticles.R
 
-// TODO watch video
 class Bottombar @JvmOverloads constructor(
         context: Context,
         attrs: AttributeSet? = null,
