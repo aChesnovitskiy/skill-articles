@@ -60,16 +60,27 @@ class RootActivity : AppCompatActivity() {
             }
         })
 
-        // Check if search is active
-        searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                Log.d("My_RootActivity", "Search is open")
-                viewModel.handleSearchMode(true)
-            } else {
-                Log.d("My_RootActivity", "Search is close")
-                viewModel.handleSearchMode(false)
-            }
+        searchView.setOnSearchClickListener { _ ->
+            Log.d("My_RootActivity", "Search is open")
+            viewModel.handleSearchMode(true)
         }
+
+        searchView.setOnCloseListener {
+            Log.d("My_RootActivity", "Search is close")
+            viewModel.handleSearchMode(false)
+            false
+        }
+
+        // Check if search is active
+//        searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
+//            if (hasFocus) {
+//                Log.d("My_RootActivity", "Search is open")
+//                viewModel.handleSearchMode(true)
+//            } else {
+//                Log.d("My_RootActivity", "Search is close")
+//                viewModel.handleSearchMode(false)
+//            }
+//        }
 
         return super.onCreateOptionsMenu(menu)
     }

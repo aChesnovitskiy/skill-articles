@@ -76,10 +76,8 @@ abstract class BaseViewModel<T>(initState: T) : ViewModel() {
             state.value = onChanged(it, currentState) ?: return@addSource
         }
     }
-
 }
 
-// TODO study
 class ViewModelFactory(private val params: String) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ArticleViewModel::class.java)) {
@@ -111,9 +109,8 @@ class Event<out E>(private val content: E) {
  * необработанное ранее событие получаемое в реализации метода Observer`a onChanged
  */
 class EventObserver<E>(private val onEventUnhandledContent: (E) -> Unit) : Observer<Event<E>> {
-
     override fun onChanged(event: Event<E>?) {
-        //если есть необработанное событие (контент) передай в качестве аргумента в лямбду
+        // если есть необработанное событие (контент) передай в качестве аргумента в лямбду
         // onEventUnhandledContent
         event?.getContentIfNotHandled()?.let {
             onEventUnhandledContent(it)
