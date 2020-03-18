@@ -21,7 +21,7 @@ import ru.skillbranch.skillarticles.viewmodels.ArticleViewModel
 import ru.skillbranch.skillarticles.viewmodels.Notify
 import ru.skillbranch.skillarticles.viewmodels.ViewModelFactory
 
-// TODO: not full scrolling
+// TODO not full scrolling
 
 class RootActivity : AppCompatActivity() {
 
@@ -46,8 +46,13 @@ class RootActivity : AppCompatActivity() {
         val searchItem = menu?.findItem(R.id.action_search)
         val searchView = searchItem?.actionView as SearchView
 
-        if (isSearchMode) searchItem.expandActionView()
-        searchQuery?.let { searchView.setQuery(searchQuery, true) }
+        if (isSearchMode) {
+            searchItem.expandActionView()
+            with (searchView) {
+                setQuery(searchQuery ?: "", true)
+                clearFocus()
+            }
+        }
 
         searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
@@ -59,6 +64,7 @@ class RootActivity : AppCompatActivity() {
             override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
                 Log.d("My_RootActivity", "Search is close")
                 viewModel.handleSearchMode(false)
+                invalidateOptionsMenu()
                 return true
             }
 
