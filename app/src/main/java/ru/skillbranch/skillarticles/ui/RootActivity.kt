@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
@@ -48,6 +49,21 @@ class RootActivity : AppCompatActivity() {
         if (isSearchMode) searchItem.expandActionView()
         searchQuery?.let { searchView.setQuery(searchQuery, true) }
 
+        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                Log.d("My_RootActivity", "Search is open")
+                viewModel.handleSearchMode(true)
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                Log.d("My_RootActivity", "Search is close")
+                viewModel.handleSearchMode(false)
+                return true
+            }
+
+        })
+
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 viewModel.handleSearch(query)
@@ -59,28 +75,6 @@ class RootActivity : AppCompatActivity() {
                 return true
             }
         })
-
-        searchView.setOnSearchClickListener { _ ->
-            Log.d("My_RootActivity", "Search is open")
-            viewModel.handleSearchMode(true)
-        }
-
-        searchView.setOnCloseListener {
-            Log.d("My_RootActivity", "Search is close")
-            viewModel.handleSearchMode(false)
-            false
-        }
-
-        // Check if search is active
-//        searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
-//            if (hasFocus) {
-//                Log.d("My_RootActivity", "Search is open")
-//                viewModel.handleSearchMode(true)
-//            } else {
-//                Log.d("My_RootActivity", "Search is close")
-//                viewModel.handleSearchMode(false)
-//            }
-//        }
 
         return super.onCreateOptionsMenu(menu)
     }
@@ -142,7 +136,7 @@ class RootActivity : AppCompatActivity() {
         // Bind submenu views
         switch_mode.isChecked = data.isDarkMode
         delegate.localNightMode =
-                if (data.isDarkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+            if (data.isDarkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
         if (data.isBigText) {
             tv_text_content.textSize = 18f
             btn_text_up.isChecked = true
@@ -155,7 +149,7 @@ class RootActivity : AppCompatActivity() {
 
         // Bind content
         tv_text_content.text =
-                if (data.isLoadingContent) "Loading..." else data.content.first() as String
+            if (data.isLoadingContent) "Loading..." else data.content.first() as String
 
         // Bind toolbar
         toolbar.title = data.title ?: "Skill Articles"
@@ -169,7 +163,7 @@ class RootActivity : AppCompatActivity() {
 
     private fun renderNotifications(notify: Notify) {
         val snackbar = Snackbar.make(coordinator_container, notify.message, Snackbar.LENGTH_LONG)
-                .apply { anchorView = bottombar }
+            .apply { anchorView = bottombar }
 
         when (notify) {
             is Notify.TextMessage -> { /* Nothing */
