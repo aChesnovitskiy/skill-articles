@@ -21,8 +21,6 @@ import ru.skillbranch.skillarticles.viewmodels.ArticleViewModel
 import ru.skillbranch.skillarticles.viewmodels.Notify
 import ru.skillbranch.skillarticles.viewmodels.ViewModelFactory
 
-// TODO not full scrolling
-
 class RootActivity : AppCompatActivity() {
 
     private lateinit var viewModel: ArticleViewModel
