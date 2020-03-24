@@ -1,20 +1,18 @@
 package ru.skillbranch.skillarticles.ui.custom.behaviors
 
-import android.content.Context
-import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
+import ru.skillbranch.skillarticles.ui.custom.Bottombar
 import kotlin.math.max
 import kotlin.math.min
 
-class BottombarBehavior<V : View>(context: Context, attrs: AttributeSet) :
-    CoordinatorLayout.Behavior<V>(context, attrs) {
+class BottombarBehavior : CoordinatorLayout.Behavior<Bottombar>() {
     // Instruct CoordinatorLayout that we care about vertical scroll events
     override fun onStartNestedScroll(
         coordinatorLayout: CoordinatorLayout,
-        child: V,
+        child: Bottombar,
         directTargetChild: View,
         target: View,
         axes: Int,
@@ -26,7 +24,7 @@ class BottombarBehavior<V : View>(context: Context, attrs: AttributeSet) :
     // Get the scroll event before the nested scrolling child (target) receives it
     override fun onNestedPreScroll(
         coordinatorLayout: CoordinatorLayout,
-        child: V,
+        child: Bottombar,
         target: View,
         dx: Int,
         dy: Int,
