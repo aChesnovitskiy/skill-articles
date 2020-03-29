@@ -129,6 +129,8 @@ class RootActivity : AppCompatActivity() {
     }
 
     private fun renderUI(data: ArticleState) {
+        bottombar.setSearchState(data.isSearch)
+
         // Bind personal article data
         btn_like.isChecked = data.isLike
         btn_bookmark.isChecked = data.isBookmark
