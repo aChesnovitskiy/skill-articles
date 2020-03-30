@@ -31,11 +31,12 @@ class BottombarBehavior : CoordinatorLayout.Behavior<Bottombar>() {
         consumed: IntArray,
         type: Int
     ) {
+        if (!child.isSearchMode) {
+            // Clamp translationY (vertical location of this view relative to its top position)
+            child.translationY = max(0f, min(child.height.toFloat(), child.translationY + dy))
+            Log.d("My_BottombarBehavior", "translationY: ${child.translationY}")
+        }
+
         super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed, type)
-
-        // Clamp translationY (vertical location of this view relative to its top position)
-        child.translationY = max(0f, min(child.height.toFloat(), child.translationY + dy))
-
-        Log.d("My_BottombarBehavior", "translationY: ${child.translationY}")
     }
 }

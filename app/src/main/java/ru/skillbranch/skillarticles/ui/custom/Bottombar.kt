@@ -63,29 +63,29 @@ class Bottombar @JvmOverloads constructor(
     private fun animateHideSearchPanel() {
         group_bottom.isVisible = true
         val endRadius = hypot(width.toFloat(), height / 2f)
-        val va = ViewAnimationUtils.createCircularReveal(
+        val viewAnimation = ViewAnimationUtils.createCircularReveal(
             search_panel,
             width,
             height / 2,
             endRadius,
             0f
         )
-        va.doOnEnd { search_panel.isVisible = false }
-        va.start()
+        viewAnimation.doOnEnd { search_panel.isVisible = false }
+        viewAnimation.start()
     }
 
     private fun animateShowSearchPanel() {
         search_panel.isVisible = true
         val endRadius = hypot(width.toFloat(), height / 2f)
-        val va = ViewAnimationUtils.createCircularReveal(
+        val viewAnimation = ViewAnimationUtils.createCircularReveal(
             search_panel,
             width,
             height / 2,
             0f,
             endRadius
         )
-        va.doOnEnd { group_bottom.isVisible = false }
-        va.start()
+        viewAnimation.doOnEnd { group_bottom.isVisible = false }
+        viewAnimation.start()
     }
 
     // Set results of searching into search panel
@@ -107,7 +107,7 @@ class Bottombar @JvmOverloads constructor(
         }
     }
 
-    // Custom class for saving view state in View.onSaveInstanceState
+    // Custom class for saving view state in View's InstanceState
     private class SavedState : BaseSavedState, Parcelable {
         var ssIsSearchMode: Boolean = false
 
