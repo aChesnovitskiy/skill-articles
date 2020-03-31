@@ -1,7 +1,5 @@
 package ru.skillbranch.skillarticles.ui
 
-import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Selection
 import android.text.Spannable
@@ -24,13 +22,13 @@ import kotlinx.android.synthetic.main.layout_submenu.*
 import kotlinx.android.synthetic.main.search_view_layout.*
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
-import ru.skillbranch.skillarticles.extensions.dpToPx
 import ru.skillbranch.skillarticles.extensions.setMarginOptionally
 import ru.skillbranch.skillarticles.ui.base.BaseActivity
 import ru.skillbranch.skillarticles.ui.base.Binding
 import ru.skillbranch.skillarticles.ui.custom.SearchFocusSpan
 import ru.skillbranch.skillarticles.ui.custom.SearchSpan
 import ru.skillbranch.skillarticles.ui.delegates.AttrValue
+import ru.skillbranch.skillarticles.ui.delegates.ObserveProp
 import ru.skillbranch.skillarticles.ui.delegates.RenderProp
 import ru.skillbranch.skillarticles.viewmodels.ArticleState
 import ru.skillbranch.skillarticles.viewmodels.ArticleViewModel
@@ -40,10 +38,13 @@ import ru.skillbranch.skillarticles.viewmodels.base.ViewModelFactory
 
 class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
     override val binding: Binding by lazy { ArticleBinding() }
-
     override val layout: Int = R.layout.activity_root
-    override lateinit var viewModel: ArticleViewModel
-    private var isSearchMode: Boolean = false
+    override val viewModel: ArticleViewModel by lazy {
+        val vmFactory = ViewModelFactory("0")
+        ViewModelProvider(this, vmFactory).get(ArticleViewModel::class.java)
+    }
+
+    private var isSearch: Boolean = false
     private var searchQuery: String? = null
 
     private val bgColor by AttrValue(R.attr.colorSecondary)
@@ -52,15 +53,11 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
-        val vmFactory = ViewModelFactory("0")
-        viewModel = ViewModelProvider(this, vmFactory).get(ArticleViewModel::class.java)
-
-        // Subscribe on article state
-        viewModel.observeState(this) { renderUI(it) }
-
-        // Subscribe on notifications
-        viewModel.observeNotifications(this) { renderNotifications(it)  }
+//        // Subscribe on article state
+//        viewModel.observeState(this) { renderUI(it) }
+//
+//        // Subscribe on notifications
+//        viewModel.observeNotifications(this) { renderNotifications(it)  }
     }
 
     override fun setupViews() {
@@ -133,7 +130,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         val searchItem = menu?.findItem(R.id.action_search)
         val searchView = searchItem?.actionView as SearchView
 
-        if (isSearchMode) {
+        if (isSearch) {
             searchItem.expandActionView()
             with(searchView) {
                 setQuery(searchQuery ?: "", true)
@@ -286,24 +283,85 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
     }
 
     inner class ArticleBinding : Binding() {
+        private var isLoadingContent by ObserveProp(true)
+
         private var isLike: Boolean by RenderProp(false) { btn_like.isChecked = it }
         private var isBookmark: Boolean by RenderProp(false) { btn_bookmark.isChecked = it }
         private var isShowMenu: Boolean by RenderProp(false) {
             btn_settings.isChecked = it
             if (it) submenu.open() else submenu.close()
         }
+        private var title: String by RenderProp("Skill Articles") { toolbar.title = it }
+        private var category: String by RenderProp("Loading...") { toolbar.subtitle = it }
+        private var categoryIcon: Int by RenderProp(R.drawable.logo_placeholder) {
+            toolbar.logo = getDrawable(it)
+        }
+        private var isBigText: Boolean by RenderProp(false) {
+            if (it) {
+                tv_text_content.textSize = 18f
+                btn_text_up.isChecked = true
+                btn_text_down.isChecked = false
+            } else {
+                tv_text_content.textSize = 14f
+                btn_text_up.isChecked = false
+                btn_text_down.isChecked = true
+            }
+        }
+        private var isDarkMode: Boolean by RenderProp(false, false) {
+            switch_mode.isChecked = it
+            delegate.localNightMode =
+                if (it) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+        }
+        private var searchResults: List<Pair<Int, Int>> by ObserveProp(emptyList())
+        private var searchPosition: Int by ObserveProp(0)
+        private var content: String by ObserveProp("Loading...") {
+            tv_text_content.setText(it, TextView.BufferType.SPANNABLE)
+            tv_text_content.movementMethod = ScrollingMovementMethod()
+        }
 
         override fun onFinishInflate() {
-            TODO("Not yet implemented")
+            dependsOn<Boolean, Boolean, List<Pair<Int, Int>>, Int>(
+                ::isLoadingContent,
+                ::isSearch,
+                ::searchResults,
+                ::searchPosition
+            ) { isLoadingContent, isSearch, searchResults, searchPosition ->
+                if (!isLoadingContent && isSearch) {
+                    renderSearchResult(searchResults)
+                    renderSearchPosition(searchPosition)
+                }
+
+                bottombar.bindSearchInfo(searchResults.size, searchPosition)
+            }
         }
 
         override fun bind(data: IViewModelState) {
             data as ArticleState
 
+            // Bind personal article data
             isLike = data.isLike
             isBookmark = data.isBookmark
-            isShowMenu = data.isShowMenu
-        }
 
+            // Bind submenu state
+            isShowMenu = data.isShowMenu
+
+            // Bind submenu views
+            isDarkMode = data.isDarkMode
+            isBigText = data.isBigText
+
+            // Bind toolbar
+            if (data.title != null) title = data.title
+            if (data.category != null) category = data.category
+            if (data.categoryIcon != null) categoryIcon = data.categoryIcon as Int
+
+            // Bind content
+            if (data.isLoadingContent) {
+                tv_text_content.text = "Loading..."
+            } else if (tv_text_content.text == "Loading...") {  // don't override content
+                val content = data.content.first() as String
+                tv_text_content.setText(content, TextView.BufferType.SPANNABLE)
+                tv_text_content.movementMethod = ScrollingMovementMethod()
+            }
+        }
     }
 }
