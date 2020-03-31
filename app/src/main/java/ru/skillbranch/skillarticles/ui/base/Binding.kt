@@ -26,9 +26,9 @@ abstract class Binding {
             delegates[it]?.addListener {
                 onChange(
                     delegates[names[0]]?.value as A,
-                    delegates[names[2]]?.value as B,
-                    delegates[names[3]]?.value as C,
-                    delegates[names[4]]?.value as D
+                    delegates[names[1]]?.value as B,
+                    delegates[names[2]]?.value as C,
+                    delegates[names[3]]?.value as D
                 )
             }
         }
