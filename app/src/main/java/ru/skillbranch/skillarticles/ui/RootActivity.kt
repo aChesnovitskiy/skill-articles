@@ -10,6 +10,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
@@ -38,18 +39,18 @@ import ru.skillbranch.skillarticles.viewmodels.base.Notify
 import ru.skillbranch.skillarticles.viewmodels.base.ViewModelFactory
 
 class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
-    override val binding: Binding by lazy { ArticleBinding() }
     override val layout: Int = R.layout.activity_root
     override val viewModel: ArticleViewModel by lazy {
         val vmFactory = ViewModelFactory("0")
         ViewModelProvider(this, vmFactory).get(ArticleViewModel::class.java)
     }
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    public override val binding: ArticleBinding by lazy { ArticleBinding() }
 
-    private var isSearch: Boolean = false
-    private var searchQuery: String? = null
-
-    private val bgColor by AttrValue(R.attr.colorSecondary)
-    private val fgColor by AttrValue(R.attr.colorOnSecondary)
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    val bgColor by AttrValue(R.attr.colorSecondary)
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    val fgColor by AttrValue(R.attr.colorOnSecondary)
 
     override fun setupViews() {
         setupToolbar()
@@ -108,29 +109,30 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
 
     override fun showSearchBar() {
         bottombar.setSearchState(true)
-        scrollView.setMarginOptionally(bottom = dpToIntPx(56))
+        scroll.setMarginOptionally(bottom = dpToIntPx(56))
     }
 
     override fun hideSearchBar() {
         bottombar.setSearchState(false)
-        scrollView.setMarginOptionally(bottom = dpToIntPx(0))
+        scroll.setMarginOptionally(bottom = dpToIntPx(0))
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_search, menu)
 
         val searchItem = menu?.findItem(R.id.action_search)
-        val searchView = searchItem?.actionView as SearchView
+        val searchView = searchItem?.actionView as? SearchView
 
-        if (isSearch) {
-            searchItem.expandActionView()
-            with(searchView) {
-                setQuery(searchQuery ?: "", true)
-                clearFocus()
-            }
+        searchView?.queryHint = getString(R.string.article_search_placeholder)
+
+        if (binding.isSearch) {
+            searchItem?.expandActionView()
+            searchView?.setQuery(binding.searchQuery ?: "", true)
+
+            if (binding.isFocusedSearch) searchView?.requestFocus() else searchView?.clearFocus()
         }
 
-        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+        searchItem?.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
                 Log.d("My_RootActivity", "Search is open")
                 viewModel.handleSearchMode(true)
@@ -145,7 +147,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
             }
         })
 
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 viewModel.handleSearch(query)
                 return true
@@ -318,6 +320,14 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
             searchQuery = data.searchQuery
             searchPosition = data.searchPosition
             searchResults = data.searchResults
+        }
+
+        override fun saveUi(outState: Bundle) {
+            outState.putBoolean(::isFocusedSearch.name, search_view?.hasFocus() ?: false)
+        }
+
+        override fun restoreUi(savedState: Bundle) {
+            isFocusedSearch = savedState.getBoolean(::isFocusedSearch.name)
         }
     }
 }

@@ -1,6 +1,7 @@
 package ru.skillbranch.skillarticles.viewmodels
 
 import android.os.Bundle
+import androidx.core.os.bundleOf
 import androidx.lifecycle.LiveData
 import ru.skillbranch.skillarticles.data.ArticleData
 import ru.skillbranch.skillarticles.data.ArticlePersonalInfo
@@ -14,7 +15,7 @@ import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
 import ru.skillbranch.skillarticles.viewmodels.base.Notify
 
 class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleState>(ArticleState()),
-        IArticleViewModel {
+    IArticleViewModel {
     private val repository = ArticleRepository
     private var menuIsShown = false
 
@@ -23,12 +24,12 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
         subscribeOnDataSource(getArticleData()) { article, state ->
             article ?: return@subscribeOnDataSource null
             state.copy(
-                    shareLink = article.shareLink,
-                    title = article.title,
-                    author = article.author,
-                    category = article.category,
-                    categoryIcon = article.categoryIcon,
-                    date = article.date.format()
+                shareLink = article.shareLink,
+                title = article.title,
+                author = article.author,
+                category = article.category,
+                categoryIcon = article.categoryIcon,
+                date = article.date.format()
             )
         }
 
@@ -36,8 +37,8 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
         subscribeOnDataSource(getArticleContent()) { content, state ->
             content ?: return@subscribeOnDataSource null
             state.copy(
-                    isLoadingContent = false,
-                    content = content
+                isLoadingContent = false,
+                content = content
             )
         }
 
@@ -45,30 +46,30 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
         subscribeOnDataSource(getArticlePersonalInfo()) { info, state ->
             info ?: return@subscribeOnDataSource null
             state.copy(
-                    isBookmark = info.isBookmark,
-                    isLike = info.isLike
+                isBookmark = info.isBookmark,
+                isLike = info.isLike
             )
         }
 
         // Subscribe on mutable data (app settings)
         subscribeOnDataSource(repository.getAppSettings()) { settings, state ->
             state.copy(
-                    isDarkMode = settings.isDarkMode,
-                    isBigText = settings.isBigText
+                isDarkMode = settings.isDarkMode,
+                isBigText = settings.isBigText
             )
         }
     }
 
     // Load article text from network
     override fun getArticleContent(): LiveData<List<Any>?> =
-            repository.loadArticleContent(articleId)
+        repository.loadArticleContent(articleId)
 
     // Load data from db
     override fun getArticleData(): LiveData<ArticleData?> = repository.getArticle(articleId)
 
     // Load data from db
     override fun getArticlePersonalInfo(): LiveData<ArticlePersonalInfo?> =
-            repository.loadArticlePersonalInfo(articleId)
+        repository.loadArticlePersonalInfo(articleId)
 
     // App settings
     override fun handleNightMode() {
@@ -124,13 +125,13 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
     }
 
     override fun handleSearchMode(isSearch: Boolean) {
-        updateState { it.copy(isSearch = isSearch) }
+        updateState { it.copy(isSearch = isSearch, isShowMenu = false, searchPosition = 0) }
     }
 
     override fun handleSearch(query: String?) {
         query ?: return
         val result = (currentState.content.firstOrNull() as? String).indexesOf(query)
-            .map{ it to it + query.length }
+            .map { it to it + query.length }
         updateState { it.copy(searchQuery = query, searchResults = result, searchPosition = 0) }
     }
 
@@ -144,34 +145,46 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
 }
 
 data class ArticleState(
-        val isAuth: Boolean = false,
-        val isLoadingContent: Boolean = true,
-        val isLoadingReviews: Boolean = true,
-        val isLike: Boolean = false,
-        val isBookmark: Boolean = false,
-        val isShowMenu: Boolean = false,
-        val isBigText: Boolean = false,
-        val isDarkMode: Boolean = false,
-        val isSearch: Boolean = false,
-        val searchQuery: String? = null,
-        val searchResults: List<Pair<Int, Int>> = emptyList(),
-        val searchPosition: Int = 0,
-        val shareLink: String? = null,
-        val title: String? = null,
-        val category: String? = null,
-        val categoryIcon: Any? = null,
-        val date: String? = null,
-        val author: Any? = null,
-        val poster: String? = null,
-        val content: List<Any> = emptyList(),
-        val reviews: List<Any> = emptyList()
+    val isAuth: Boolean = false,
+    val isLoadingContent: Boolean = true,
+    val isLoadingReviews: Boolean = true,
+    val isLike: Boolean = false,
+    val isBookmark: Boolean = false,
+    val isShowMenu: Boolean = false,
+    val isBigText: Boolean = false,
+    val isDarkMode: Boolean = false,
+    val isSearch: Boolean = false,
+    val searchQuery: String? = null,
+    val searchResults: List<Pair<Int, Int>> = emptyList(),
+    val searchPosition: Int = 0,
+    val shareLink: String? = null,
+    val title: String? = null,
+    val category: String? = null,
+    val categoryIcon: Any? = null,
+    val date: String? = null,
+    val author: Any? = null,
+    val poster: String? = null,
+    val content: List<Any> = emptyList(),
+    val reviews: List<Any> = emptyList()
 ) : IViewModelState {
     override fun save(outState: Bundle) {
-        TODO("Not yet implemented")
+        outState.putAll(
+            bundleOf(
+                "isSearch" to isSearch,
+                "searchQuery" to searchQuery,
+                "searchResults" to searchResults,
+                "searchPosition" to searchPosition
+            )
+        )
     }
 
-    override fun restore(savedState: Bundle): IViewModelState {
-        TODO("Not yet implemented")
+    override fun restore(savedState: Bundle): ArticleState {
+        return copy(
+            isSearch = savedState["isSearch"] as Boolean,
+            searchQuery = savedState["searchQuery"] as? String,
+            searchResults = savedState["searchResults"] as List<Pair<Int, Int>>,
+            searchPosition = savedState["searchPosition"] as Int
+        )
     }
 }
 
