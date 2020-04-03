@@ -1,7 +1,6 @@
 package ru.skillbranch.skillarticles.ui.base
 
 import android.os.Bundle
-import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.BaseViewModel
@@ -16,7 +15,8 @@ abstract class BaseActivity<T : BaseViewModel<out IViewModelState>> : AppCompatA
 
     // Set listeners, tuning views
     abstract fun setupViews()
-    abstract fun renderNotifications(notify: Notify)
+
+    abstract fun renderNotification(notify: Notify)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,7 +26,7 @@ abstract class BaseActivity<T : BaseViewModel<out IViewModelState>> : AppCompatA
         binding.onFinishInflate()
 
         viewModel.observeState(this) { binding.bind(it) }
-        viewModel.observeNotifications(this) { renderNotifications(it) }
+        viewModel.observeNotifications(this) { renderNotification(it) }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

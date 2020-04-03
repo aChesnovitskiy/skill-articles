@@ -203,7 +203,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         switch_mode.setOnClickListener { viewModel.handleNightMode() }
     }
 
-    override fun renderNotifications(notify: Notify) {
+    override fun renderNotification(notify: Notify) {
         val snackbar = Snackbar.make(coordinator_container, notify.message, Snackbar.LENGTH_LONG)
             .apply { anchorView = bottombar }
 

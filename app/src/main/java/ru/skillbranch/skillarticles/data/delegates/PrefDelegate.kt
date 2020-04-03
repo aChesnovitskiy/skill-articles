@@ -14,7 +14,7 @@ class PrefDelegate<T>(private val defaultValue: T) : ReadWriteProperty<PrefManag
             is Float -> preferences.getFloat(property.name, defaultValue) as T
             is Int -> preferences.getInt(property.name, defaultValue) as T
             is Long -> preferences.getLong(property.name, defaultValue) as T
-            else -> null
+            else -> error("Unexpected type")
         }
     }
 
