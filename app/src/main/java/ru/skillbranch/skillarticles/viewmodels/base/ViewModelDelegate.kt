@@ -13,7 +13,7 @@ class ViewModelDelegate<T : ViewModel>(private val clazz: Class<T>, private val 
 
     override fun getValue(thisRef: FragmentActivity, property: KProperty<*>): T {
         return if (!::delegateViewModel.isInitialized) {
-            ViewModelProvider(thisRef, DelegateVMFactory(arg)).get(clazz)
+            ViewModelProvider(thisRef, DelegateVMFactory(arg)).get(clazz) // TODO try to change on ViewModelFactory
         } else {
             delegateViewModel
         }
