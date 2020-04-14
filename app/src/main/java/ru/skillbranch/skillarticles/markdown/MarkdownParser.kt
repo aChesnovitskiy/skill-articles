@@ -4,7 +4,7 @@ import java.util.regex.Pattern
 
 object MarkdownParser {
 
-    private val LINE_SEPARATOR = System.getProperty("line.separator") ?: "\n"
+    private val LINE_SEPARATOR = /*System.getProperty("line.separator") ?: */"\n"
 
     // Regex groups
     private const val UNORDERED_LIST_ITEM_GROUP = "(^[*+-] .+$)"
@@ -18,13 +18,13 @@ object MarkdownParser {
     private const val RULE_GROUP = "(^[-_*]{3}$)"
     private const val INLINE_GROUP = "((?<!`)`[^`\\s].*?[^`\\s]?`(?!`))"
     private const val LINK_GROUP = "(\\[[^\\[\\]]*?]\\(.*?\\)|^\\[*?]\\(.*?\\))"
-    private const val BLOCK_CODE_GROUP = "(^```(.+\\n?)*```$)"
+    private const val BLOCK_CODE_GROUP = "(^```.+```$|^```.+\\n.+```$|^```.+\\n(.+\\n)*.+```$)" // TODO
     private const val ORDER_LIST_GROUP = "(^(\\d)+?\\. .+$)"
 
     // Result regex
     private const val MARKDOWN_GROUPS = "$UNORDERED_LIST_ITEM_GROUP|$HEADER_GROUP|$QUOTE_GROUP" +
             "|$ITALIC_GROUP|$BOLD_GROUP|$STRIKE_GROUP|$RULE_GROUP|$INLINE_GROUP|$LINK_GROUP" +
-            /*|$BLOCK_CODE_GROUP*/"|$ORDER_LIST_GROUP"
+            /*"|$BLOCK_CODE_GROUP*/"|$ORDER_LIST_GROUP"
 
     private val elementsPattern by lazy { Pattern.compile(MARKDOWN_GROUPS, Pattern.MULTILINE) }
 
