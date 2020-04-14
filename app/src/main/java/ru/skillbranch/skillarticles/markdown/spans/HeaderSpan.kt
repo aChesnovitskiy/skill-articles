@@ -3,6 +3,7 @@ package ru.skillbranch.skillarticles.markdown.spans
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.text.Layout
+import android.text.Spanned
 import android.text.TextPaint
 import android.text.style.LeadingMarginSpan
 import android.text.style.LineHeightSpan
@@ -24,12 +25,12 @@ class HeaderSpan constructor(
     private val marginTop: Float,
     @Px
     private val marginBottom: Float
-) :
-    MetricAffectingSpan(), LineHeightSpan, LeadingMarginSpan {
+) : MetricAffectingSpan(), LineHeightSpan, LeadingMarginSpan {
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val linePadding = 0.4f
     private var originAscent = 0
+
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val sizes = mapOf(
         1 to 2f,
@@ -48,15 +49,42 @@ class HeaderSpan constructor(
         lineHeight: Int,
         fm: Paint.FontMetricsInt?
     ) {
-        //TODO implement me
+        fm ?: return
+
+        text as Spanned
+        val spanStart = text.getSpanStart(this)
+        val spanEnd = text.getSpanEnd(this)
+
+        if (spanStart == start) {
+            originAscent = fm.ascent
+            fm.ascent = (fm.ascent - marginTop).toInt()
+        } else {
+            fm.ascent = originAscent
+        }
+
+        // Line break gives +1 character
+        if (spanEnd == end.dec()) {
+            val originHeight = fm.descent - originAscent
+            fm.descent = (originHeight * linePadding + marginBottom).toInt()
+        }
+
+        fm.top = fm.ascent
+        fm.bottom = fm.descent
     }
 
     override fun updateMeasureState(paint: TextPaint) {
-        //TODO implement me
+        with(paint) {
+            textSize *= sizes.getOrElse(level) { 1f }
+            isFakeBoldText = true
+        }
     }
 
     override fun updateDrawState(tp: TextPaint) {
-        //TODO implement me
+        with(tp) {
+            textSize *= sizes.getOrElse(level) { 1f }
+            isFakeBoldText = true
+            color = textColor
+        }
     }
 
     override fun drawLeadingMargin(
@@ -64,15 +92,39 @@ class HeaderSpan constructor(
         lineTop: Int, lineBaseline: Int, lineBottom: Int, text: CharSequence?, lineStart: Int,
         lineEnd: Int, isFirstLine: Boolean, layout: Layout?
     ) {
-        //TODO implement me
+        // For 1 or 2 level and last line
+        if ((level == 1 || level == 2) && (text as Spanned).getSpanEnd(this) == lineEnd) {
+            paint.forLine {
+                // Font height
+                val lh = (paint.descent() - paint.ascent()) * sizes.getOrElse(level) { 1f }
+                val lineOffset = lineBaseline + lh * linePadding
+
+                canvas.drawLine(
+                    0f,
+                    lineOffset,
+                    canvas.width.toFloat(),
+                    lineOffset,
+                    paint
+                )
+            }
+        }
     }
 
-    override fun getLeadingMargin(first: Boolean): Int {
-        //TODO implement me
-        return 0
-    }
+    override fun getLeadingMargin(first: Boolean): Int = 0
 
     private inline fun Paint.forLine(block: () -> Unit) {
-        //TODO implement me
+        val oldColor = color
+        val oldStyle = style
+        val oldWidth = strokeWidth
+
+        color = dividerColor
+        style = Paint.Style.STROKE
+        strokeWidth = 0f
+
+        block()
+
+        color = oldColor
+        style = oldStyle
+        strokeWidth = oldWidth
     }
 }

@@ -25,6 +25,7 @@ import kotlinx.android.synthetic.main.search_view_layout.*
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
 import ru.skillbranch.skillarticles.extensions.setMarginOptionally
+import ru.skillbranch.skillarticles.markdown.MarkdownBuilder
 import ru.skillbranch.skillarticles.ui.base.BaseActivity
 import ru.skillbranch.skillarticles.ui.base.Binding
 import ru.skillbranch.skillarticles.ui.custom.SearchFocusSpan
@@ -41,11 +42,13 @@ import ru.skillbranch.skillarticles.viewmodels.base.ViewModelFactory
 class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
     override val layout: Int = R.layout.activity_root
     override val viewModel: ArticleViewModel by provideViewModel("0")
+
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
     public override val binding: ArticleBinding by lazy { ArticleBinding() }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val bgColor by AttrValue(R.attr.colorSecondary)
+
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val fgColor by AttrValue(R.attr.colorOnSecondary)
 
@@ -266,7 +269,11 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         private var searchResults: List<Pair<Int, Int>> by ObserveProp(emptyList())
         private var searchPosition: Int by ObserveProp(0)
         private var content: String by ObserveProp("Loading...") {
-            tv_text_content.setText(it, TextView.BufferType.SPANNABLE)
+            MarkdownBuilder(this@RootActivity)
+                .markdownToSpan(it)
+                .run {
+                    tv_text_content.setText(this, TextView.BufferType.SPANNABLE)
+                }
             tv_text_content.movementMethod = ScrollingMovementMethod()
         }
 
