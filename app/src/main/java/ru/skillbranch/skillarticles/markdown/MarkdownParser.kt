@@ -18,13 +18,13 @@ object MarkdownParser {
     private const val RULE_GROUP = "(^[-_*]{3}$)"
     private const val INLINE_GROUP = "((?<!`)`[^`\\s].*?[^`\\s]?`(?!`))"
     private const val LINK_GROUP = "(\\[[^\\[\\]]*?]\\(.*?\\)|^\\[*?]\\(.*?\\))"
-    private const val BLOCK_CODE_GROUP = "(^```.+```$|^```.+\\n.+```$|^```.+\\n(.+\\n)*.+```$)" // TODO
+    private const val BLOCK_CODE_GROUP = "(^```[\\s\\S]+?```$)"
     private const val ORDER_LIST_GROUP = "(^(\\d)+?\\. .+$)"
 
     // Result regex
     private const val MARKDOWN_GROUPS = "$UNORDERED_LIST_ITEM_GROUP|$HEADER_GROUP|$QUOTE_GROUP" +
             "|$ITALIC_GROUP|$BOLD_GROUP|$STRIKE_GROUP|$RULE_GROUP|$INLINE_GROUP|$LINK_GROUP" +
-            /*"|$BLOCK_CODE_GROUP*/"|$ORDER_LIST_GROUP"
+            "|$BLOCK_CODE_GROUP|$ORDER_LIST_GROUP"
 
     private val elementsPattern by lazy { Pattern.compile(MARKDOWN_GROUPS, Pattern.MULTILINE) }
 
@@ -77,7 +77,7 @@ object MarkdownParser {
             var text: CharSequence
 
             // Groups range for iterate by groups
-            val groups = 1..10
+            val groups = 1..11
             var group = -1
             for (gr in groups) {
                 if (matcher.group(gr) != null) {
@@ -181,48 +181,48 @@ object MarkdownParser {
                     lastStartIndex = endIndex
                 }
 
-                //10 -> BLOCK CODE - optionally
-//                10 -> {
-//                    //text without "```{}```"
-//                    text = string.subSequence(startIndex.plus(3), endIndex.plus(-3))
-//                    val strings = ".+\\n?".toRegex().findAll(text).toList().map { it.value }
-//                    when (strings.size) {
-//                        0 -> error("Wrong BLOCK CODE defining")
-//                        1 -> {
-//                            val element =
-//                                Element.BlockCode(Element.BlockCode.Type.SINGLE, strings[0])
-//                            parents.add(element)
-//                        }
-//                        else -> {
-//                            strings.forEachIndexed { index, str ->
-//                                when (index) {
-//                                    0 -> {
-//                                        val element =
-//                                            Element.BlockCode(Element.BlockCode.Type.START, str)
-//                                        parents.add(element)
-//                                    }
-//                                    strings.size - 1 -> {
-//                                        val element =
-//                                            Element.BlockCode(Element.BlockCode.Type.END, str)
-//                                        parents.add(element)
-//                                    }
-//                                    else -> {
-//                                        val element =
-//                                            Element.BlockCode(Element.BlockCode.Type.MIDDLE, str)
-//                                        parents.add(element)
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                    lastStartIndex = endIndex
-//                }
-
-                //11 -> NUMERIC LIST
+                //BLOCK CODE
                 10 -> {
+                    //text without "```{}```"
+                    text = string.subSequence(startIndex.plus(3), endIndex.plus(-3))
+                    val strings = ".+\\n?".toRegex().findAll(text).toList().map { it.value }
+                    when (strings.size) {
+                        0 -> error("Wrong BLOCK CODE defining")
+                        1 -> {
+                            val element =
+                                Element.BlockCode(Element.BlockCode.Type.SINGLE, strings[0])
+                            parents.add(element)
+                        }
+                        else -> {
+                            strings.forEachIndexed { index, str ->
+                                when (index) {
+                                    0 -> {
+                                        val element =
+                                            Element.BlockCode(Element.BlockCode.Type.START, str)
+                                        parents.add(element)
+                                    }
+                                    strings.size - 1 -> {
+                                        val element =
+                                            Element.BlockCode(Element.BlockCode.Type.END, str)
+                                        parents.add(element)
+                                    }
+                                    else -> {
+                                        val element =
+                                            Element.BlockCode(Element.BlockCode.Type.MIDDLE, str)
+                                        parents.add(element)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    lastStartIndex = endIndex
+                }
+
+                //NUMERIC LIST
+                11 -> {
                     val reg = "^(\\d)+?".toRegex().find(string.subSequence(startIndex, endIndex))
                     val order = reg!!.value
-                    // Text without "1. " (or any other number instead of 1)
+                    // Text without "<order>. "
                     text = string.subSequence(startIndex.plus(order.length.plus(2)), endIndex)
                     val subelements = findElements(text)
                     val element = Element.OrderedListItem(order, text, subelements)
