@@ -220,10 +220,10 @@ object MarkdownParser {
 
                 //NUMERIC LIST
                 11 -> {
-                    val reg = "^(\\d)+?".toRegex().find(string.subSequence(startIndex, endIndex))
+                    val reg = "^(\\d)+.?".toRegex().find(string.subSequence(startIndex, endIndex))
                     val order = reg!!.value
                     // Text without "<order>. "
-                    text = string.subSequence(startIndex.plus(order.length.plus(2)), endIndex)
+                    text = string.subSequence(startIndex.plus(order.length.plus(1)), endIndex)
                     val subelements = findElements(text)
                     val element = Element.OrderedListItem(order, text, subelements)
                     parents.add(element)
