@@ -21,6 +21,7 @@ class InlineCodeSpan(
 ) : ReplacementSpan() {
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     var rect: RectF = RectF()
+
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     var measureWidth: Int = 0
 
@@ -33,7 +34,7 @@ class InlineCodeSpan(
     ): Int {
         paint.forText {
             val measureText = paint.measureText(text.toString(), start, end)
-            measureWidth = (measureText +2 * padding).toInt()
+            measureWidth = (measureText + 2 * padding).toInt()
         }
         return measureWidth
     }
