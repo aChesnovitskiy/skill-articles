@@ -119,23 +119,23 @@ class BlockCodeSpan(
         if (fm != null) {
             when (type) {
                 Element.BlockCode.Type.SINGLE -> {
-                    fm.ascent = (fm.ascent * 0.85f - 2 * padding).toInt()
-                    fm.descent = (fm.descent * 0.85f + 2 * padding).toInt()
+                    fm.ascent = (paint.ascent() * 0.85f - 2 * padding).toInt()
+                    fm.descent = (paint.descent() * 0.85f + 2 * padding).toInt()
                 }
 
                 Element.BlockCode.Type.START -> {
-                    fm.ascent = (fm.ascent * 0.85f - 2 * padding).toInt()
-                    fm.descent = (fm.descent * 0.85f).toInt()
+                    fm.ascent = (paint.ascent() * 0.85f - 2 * padding).toInt()
+                    fm.descent = (paint.descent() * 0.85f).toInt()
                 }
 
                 Element.BlockCode.Type.MIDDLE -> {
-                    fm.ascent = (fm.ascent * 0.85f).toInt()
-                    fm.descent = (fm.descent * 0.85f).toInt()
+                    fm.ascent = (paint.ascent() * 0.85f).toInt()
+                    fm.descent = (paint.descent() * 0.85f).toInt()
                 }
 
                 Element.BlockCode.Type.END -> {
-                    fm.ascent = (fm.ascent * 0.85f).toInt()
-                    fm.descent = (fm.descent * 0.85f + 2 * padding).toInt()
+                    fm.ascent = (paint.ascent() * 0.85f).toInt()
+                    fm.descent = (paint.descent() * 0.85f + 2 * padding).toInt()
                 }
             }
         }
