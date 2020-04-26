@@ -267,7 +267,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
                 if (it) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
         }
         var isSearch: Boolean by ObserveProp(false) { if (it) showSearchBar() else hideSearchBar() }
-        private var searchResults: List<Pair<Int, Int>> by ObserveProp(emptyList())
+        private var searchResults: List<Pair<Int, Int>> by ObserveProp(emptyList<Pair<Int, Int>>())
         private var searchPosition: Int by ObserveProp(0)
         private var content: String by ObserveProp("Loading...") {
             MarkdownBuilder(this@RootActivity)
