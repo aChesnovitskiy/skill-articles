@@ -17,3 +17,12 @@ fun View.setMarginOptionally(
         this.layoutParams as ViewGroup.MarginLayoutParams
     marginParams.setMargins(left, top, right, bottom)
 }
+
+fun View.setPaddingOptionally(
+    left: Int = paddingLeft,
+    right: Int = paddingRight,
+    top: Int = paddingTop,
+    bottom: Int = paddingBottom
+) {
+    setPadding(left, top, right, bottom)
+}
