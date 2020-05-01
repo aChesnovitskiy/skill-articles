@@ -33,7 +33,7 @@ class MarkdownCodeView private constructor(
         }
 
     override val spannableContent: Spannable
-        get() = tv_codeView as Spannable
+        get() = tv_codeView.text as Spannable
 
     var copyListener: ((String) -> Unit)? = null
 
@@ -125,7 +125,7 @@ class MarkdownCodeView private constructor(
             imageTintList = ColorStateList.valueOf(textColor)
             setOnClickListener { toggleColors() }
         }
-        addView(iv_copy)
+        addView(iv_switch)
     }
 
 

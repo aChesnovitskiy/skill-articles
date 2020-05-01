@@ -14,12 +14,12 @@ object MarkdownParser {
         "((?<!\\*)\\*[^*].*?[^*]\\*(?!\\*)|(?<!\\_)\\_[^_].*?[^_]\\_(?!\\_))"
     private const val BOLD_GROUP =
         "((?<!\\*)\\*{2}[^*].*?[^*]\\*{2}(?!\\*)|(?<!\\_)\\_{2}[^_].*?[^_]\\_{2}(?!\\_))"
-    private const val STRIKE_GROUP = "((?<!\\~)\\~{2}[^~].*?[^~]\\~{2}(?!\\~))"
+    private const val STRIKE_GROUP = "(~~.+?~~)"
     private const val RULE_GROUP = "(^[-_*]{3}$)"
     private const val INLINE_GROUP = "((?<!`)`[^`\\s].*?[^`\\s]?`(?!`))"
     private const val LINK_GROUP = "(\\[[^\\[\\]]*?]\\(.*?\\)|^\\[*?]\\(.*?\\))"
     private const val BLOCK_CODE_GROUP = "(^```[\\s\\S]+?```$)"
-    private const val ORDER_LIST_GROUP = "(^(\\d)+?\\. .+$)"
+    private const val ORDER_LIST_GROUP = "(^\\d{1,2}\\.\\s.+?$)"
     private const val IMAGE_GROUP = "(^!\\[[^\\[\\]]*?\\]\\(.*?\\)$)"
 
     // Result regex
@@ -208,7 +208,7 @@ object MarkdownParser {
                 //BLOCK CODE
                 10 -> {
                     //text without "```{}```"
-                    text = string.subSequence(startIndex.plus(3), endIndex.plus(-3))
+                    text = string.subSequence(startIndex.plus(3), endIndex.plus(-3)).toString()
                     val element = Element.BlockCode(text)
                     parents.add(element)
                     lastStartIndex = endIndex
@@ -216,10 +216,10 @@ object MarkdownParser {
 
                 //NUMERIC LIST
                 11 -> {
-                    val reg = "^(\\d)+.?".toRegex().find(string.subSequence(startIndex, endIndex))
+                    val reg = "(^\\d{1,2}.)".toRegex().find(string.subSequence(startIndex, endIndex))
                     val order = reg!!.value
                     // Text without "<order>. "
-                    text = string.subSequence(startIndex.plus(order.length.plus(1)), endIndex)
+                    text = string.subSequence(startIndex.plus(order.length.inc()), endIndex).toString()
                     val subelements = findElements(text)
                     val element = Element.OrderedListItem(order, text, subelements)
                     parents.add(element)

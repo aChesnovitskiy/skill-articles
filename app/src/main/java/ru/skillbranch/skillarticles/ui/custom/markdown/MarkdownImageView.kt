@@ -149,7 +149,7 @@ class MarkdownImageView private constructor(
         val width = View.getDefaultSize(suggestedMinimumWidth, widthMeasureSpec)
 
         // Create measureSpec for children EXACTLY
-        // All children == parent width (constraint parent width)
+        // All children width == parent width (constraint parent width)
         val ms = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY)
 
         iv_image.measure(ms, heightMeasureSpec)

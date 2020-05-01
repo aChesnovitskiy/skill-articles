@@ -1,5 +1,5 @@
 <resources>
-    <!-- global colors -->
+    <!-- Global colors -->
     <attr name="darkSurfaceColor" format="color" />
     <attr name="lightSurfaceColor" format="color" />
     <attr name="darkOnSurfaceColor" format="color" />
@@ -11,6 +11,7 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:statusBarColor">@color/color_primary_dark</item>
+        <item name="android:windowLightStatusBar">false</item>
 
         <item name="android:textColorSecondary">@color/color_accent</item>
         <item name="colorPrimary">@color/color_primary</item>
