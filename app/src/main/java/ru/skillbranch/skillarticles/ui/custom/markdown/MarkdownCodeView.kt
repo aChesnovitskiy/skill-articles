@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
+import android.os.Parcel
+import android.os.Parcelable
 import android.text.Selection
 import android.text.Spannable
 import android.view.View
@@ -128,7 +130,6 @@ class MarkdownCodeView private constructor(
         addView(iv_switch)
     }
 
-
     constructor(
         context: Context,
         fontSize: Float,
@@ -222,4 +223,72 @@ class MarkdownCodeView private constructor(
         (background as GradientDrawable).color = ColorStateList.valueOf(bgColor)
         tv_codeView.setTextColor(textColor)
     }
+
+    /* For state saving START */
+    companion object SaveStateConst {
+        const val NOT_DARK = 0
+        const val DARK = 1
+        const val NOT_MANUAL = 0
+        const val MANUAL = 1
+    }
+
+    private class SavedState : BaseSavedState {
+        var ssIsDark = NOT_DARK
+        var ssIsManual = NOT_MANUAL
+
+        internal constructor(superState: Parcelable?) : super(superState)
+
+        private constructor(`in`: Parcel) : super(`in`) {
+            ssIsDark = `in`.readInt()
+            ssIsManual = `in`.readInt()
+        }
+
+        override fun writeToParcel(out: Parcel?, flags: Int) {
+            super.writeToParcel(out, flags)
+            out?.writeInt(ssIsDark)
+            out?.writeInt(ssIsManual)
+        }
+
+        companion object CREATOR : Parcelable.Creator<SavedState> {
+            override fun createFromParcel(parcel: Parcel): SavedState {
+                return SavedState(parcel)
+            }
+
+            override fun newArray(size: Int): Array<SavedState?> {
+                return arrayOfNulls(size)
+            }
+        }
+    }
+
+    override fun onSaveInstanceState(): Parcelable? {
+        // Obtain any state that our super class wants to save.
+        val superState = super.onSaveInstanceState()
+
+        // Wrap our super class's state with our own.
+        val myState = SavedState(superState)
+        myState.ssIsDark = if (isDark) DARK else NOT_DARK
+        myState.ssIsManual = if (isManual) MANUAL else NOT_MANUAL
+
+        // Return our state along with our super class's state.
+        return myState
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        // Cast the incoming Parcelable to our custom SavedState. We produced
+        // this Parcelable before, so we know what type it is.
+        val savedState = state as SavedState
+
+        // Let our super class process state before we do because we should
+        // depend on our super class, we shouldn't imply that our super class
+        // might need to depend on us.
+        super.onRestoreInstanceState(savedState.superState)
+
+        // Grab our properties out of our SavedState.
+        isDark = savedState.ssIsDark == DARK
+        isManual = savedState.ssIsManual == MANUAL
+
+        // Update our visuals in whatever way we want
+        applyColors()
+    }
+    /* For state saving END */
 }

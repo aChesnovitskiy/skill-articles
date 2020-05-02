@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.children
+import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.data.repositories.MarkdownElement
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
 import ru.skillbranch.skillarticles.extensions.groupByBounds
@@ -20,7 +21,11 @@ class MarkdownContentView @JvmOverloads constructor(
     private lateinit var elements: List<MarkdownElement>
 
     //for restore
-    private var ids = arrayListOf<Int>()
+    private val idImageView = context.getString(R.string.markdown_image_view).toInt()
+    private var idImageViewCount = 0
+    private val idCodeView = context.getString(R.string.markdown_code_view).toInt()
+    private var idCodeViewCount = 0
+    private var ids = arrayListOf(idImageView, idCodeView)
 
     var textSize by Delegates.observable(14f) { _, old, value ->
         if (value == old) return@observable
@@ -30,7 +35,7 @@ class MarkdownContentView @JvmOverloads constructor(
         }
     }
     var isLoading: Boolean = true
-    val padding = context.dpToIntPx(8)
+    private val padding = context.dpToIntPx(8)
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         var usedHeight = paddingTop
@@ -96,7 +101,10 @@ class MarkdownContentView @JvmOverloads constructor(
                         it.image.url,
                         it.image.text,
                         it.image.alt
-                    )
+                    ).apply {
+                        id = ids[0] + idImageViewCount
+                    }
+                    idImageViewCount++
                     addView(iv)
                 }
 
@@ -105,7 +113,10 @@ class MarkdownContentView @JvmOverloads constructor(
                         context,
                         textSize,
                         it.blockCode.text
-                    )
+                    ).apply {
+                        id = ids[1] + idCodeViewCount
+                    }
+                    idCodeViewCount++
                     addView(sv)
                 }
             }
