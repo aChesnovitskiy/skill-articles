@@ -85,6 +85,9 @@ class MarkdownImageView private constructor(
         strokeWidth = 0f
     }
 
+    private var isAltVisible = false
+    private var aspectRatio = 0F
+
     init {
         layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
         iv_image = ImageView(context).apply {
@@ -142,8 +145,19 @@ class MarkdownImageView private constructor(
             iv_image.setOnClickListener {
                 if (tv_alt?.isVisible == true) animateHideAlt()
                 else animateShowAlt()
+                isAltVisible = !isAltVisible
             }
         }
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+
+        Glide
+            .with(context)
+            .load(imageUrl)
+            .transform(AspectRatioResizeTransform())
+            .into(iv_image)
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
@@ -155,7 +169,14 @@ class MarkdownImageView private constructor(
         // All children width == parent width (constraint parent width)
         val ms = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY)
 
-        iv_image.measure(ms, heightMeasureSpec)
+        if (aspectRatio != 0F) {
+            // Restore width/height by aspectRatio
+            val hms = MeasureSpec.makeMeasureSpec((width / aspectRatio).toInt(), MeasureSpec.EXACTLY)
+            iv_image.measure(ms, hms)
+        } else {
+            iv_image.measure(ms, heightMeasureSpec)
+        }
+
         tv_title.measure(ms, heightMeasureSpec)
         tv_alt?.measure(ms, heightMeasureSpec)
 
@@ -245,24 +266,50 @@ class MarkdownImageView private constructor(
         va.start()
     }
 
+    // TODO check if is it works
     /* For state saving START */
-    companion object SaveStateConst {
-        const val ALT_IS_INVISIBLE = 0
-        const val ALT_IS_VISIBLE = 1
+    override fun onSaveInstanceState(): Parcelable? {
+        // Wrap our super class's state with our own.
+        val savedState = SavedState(super.onSaveInstanceState())
+        savedState.ssIsAltVisible = isAltVisible
+        savedState.ssAspectRatio = (iv_image.width.toFloat() / iv_image.height)
+
+        // Return our state along with our super class's state.
+        return savedState
     }
 
-    private class SavedState : BaseSavedState {
-        var altIsVisible = ALT_IS_INVISIBLE
+    override fun onRestoreInstanceState(state: Parcelable) {
+        // Let our super class process state before we do because we should
+        // depend on our super class, we shouldn't imply that our super class
+        // might need to depend on us.
+        super.onRestoreInstanceState(state)
 
-        internal constructor(superState: Parcelable?) : super(superState)
+        // Grab our properties out of our SavedState.
+        if (state is SavedState) {
+            isAltVisible = state.ssIsAltVisible
+            aspectRatio = state.ssAspectRatio
+            tv_alt?.isVisible = isAltVisible
+        }
+    }
 
-        private constructor(`in`: Parcel) : super(`in`) {
-            altIsVisible = `in`.readInt()
+    private class SavedState : BaseSavedState, Parcelable {
+        var ssIsAltVisible: Boolean = false
+        var ssAspectRatio = 0F
+
+        constructor(superState: Parcelable?) : super(superState)
+
+        private constructor(src: Parcel) : super(src) {
+            ssIsAltVisible = src.readInt() == 1
         }
 
-        override fun writeToParcel(out: Parcel?, flags: Int) {
-            super.writeToParcel(out, flags)
-            out?.writeInt(altIsVisible)
+        override fun writeToParcel(dst: Parcel, flags: Int) {
+            super.writeToParcel(dst, flags)
+            dst.writeInt(if (ssIsAltVisible) 1 else 0)
+            dst.writeFloat(ssAspectRatio)
+        }
+
+        override fun describeContents(): Int {
+            return 0
         }
 
         companion object CREATOR : Parcelable.Creator<SavedState> {
@@ -274,35 +321,6 @@ class MarkdownImageView private constructor(
                 return arrayOfNulls(size)
             }
         }
-    }
-
-    override fun onSaveInstanceState(): Parcelable? {
-        // Obtain any state that our super class wants to save.
-        val superState = super.onSaveInstanceState()
-
-        // Wrap our super class's state with our own.
-        val myState = SavedState(superState)
-        myState.altIsVisible = if (tv_alt?.isVisible == true) ALT_IS_VISIBLE else ALT_IS_INVISIBLE
-
-        // Return our state along with our super class's state.
-        return myState
-    }
-
-    override fun onRestoreInstanceState(state: Parcelable?) {
-        // Cast the incoming Parcelable to our custom SavedState. We produced
-        // this Parcelable before, so we know what type it is.
-        val savedState = state as SavedState
-
-        // Let our super class process state before we do because we should
-        // depend on our super class, we shouldn't imply that our super class
-        // might need to depend on us.
-        super.onRestoreInstanceState(savedState.superState)
-
-        // Grab our properties out of our SavedState.
-        tv_alt?.isVisible = savedState.altIsVisible == ALT_IS_VISIBLE
-
-        // Update our visuals in whatever way we want
-//        invalidate()
     }
     /* For state saving END */
 }

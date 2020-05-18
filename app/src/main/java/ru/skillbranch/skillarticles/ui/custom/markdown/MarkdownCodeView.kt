@@ -225,29 +225,50 @@ class MarkdownCodeView private constructor(
     }
 
     /* For state saving START */
-    companion object SaveStateConst {
-        const val NOT_DARK = 0
-        const val DARK = 1
-        const val NOT_MANUAL = 0
-        const val MANUAL = 1
+    override fun onSaveInstanceState(): Parcelable? {
+        // Wrap our super class's state with our own.
+        val savedState = SavedState(super.onSaveInstanceState())
+        savedState.ssIsDark = isDark
+        savedState.ssIsManual = isManual
+
+        // Return our state along with our super class's state.
+        return savedState
     }
 
-    private class SavedState : BaseSavedState {
-        var ssIsDark = NOT_DARK
-        var ssIsManual = NOT_MANUAL
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        // Let our super class process state before we do because we should
+        // depend on our super class, we shouldn't imply that our super class
+        // might need to depend on us.
+        super.onRestoreInstanceState(state)
+
+        // Grab our properties out of our SavedState.
+        if (state is SavedState) {
+            isDark = state.ssIsDark
+            isManual = state.ssIsManual
+        }
+
+        // Update our visuals in whatever way we want
+        applyColors()
+    }
+
+    private class SavedState : BaseSavedState, Parcelable {
+        var ssIsDark = false
+        var ssIsManual = false
 
         internal constructor(superState: Parcelable?) : super(superState)
 
-        private constructor(`in`: Parcel) : super(`in`) {
-            ssIsDark = `in`.readInt()
-            ssIsManual = `in`.readInt()
+        private constructor(src: Parcel) : super(src) {
+            ssIsDark = src.readInt() == 1
+            ssIsManual = src.readInt() == 1
         }
 
-        override fun writeToParcel(out: Parcel?, flags: Int) {
-            super.writeToParcel(out, flags)
-            out?.writeInt(ssIsDark)
-            out?.writeInt(ssIsManual)
+        override fun writeToParcel(dst: Parcel, flags: Int) {
+            super.writeToParcel(dst, flags)
+            dst.writeInt(if (ssIsDark) 1 else 0)
+            dst.writeInt(if (ssIsManual) 1 else 0)
         }
+
+        override fun describeContents(): Int = 0
 
         companion object CREATOR : Parcelable.Creator<SavedState> {
             override fun createFromParcel(parcel: Parcel): SavedState {
@@ -258,37 +279,6 @@ class MarkdownCodeView private constructor(
                 return arrayOfNulls(size)
             }
         }
-    }
-
-    override fun onSaveInstanceState(): Parcelable? {
-        // Obtain any state that our super class wants to save.
-        val superState = super.onSaveInstanceState()
-
-        // Wrap our super class's state with our own.
-        val myState = SavedState(superState)
-        myState.ssIsDark = if (isDark) DARK else NOT_DARK
-        myState.ssIsManual = if (isManual) MANUAL else NOT_MANUAL
-
-        // Return our state along with our super class's state.
-        return myState
-    }
-
-    override fun onRestoreInstanceState(state: Parcelable?) {
-        // Cast the incoming Parcelable to our custom SavedState. We produced
-        // this Parcelable before, so we know what type it is.
-        val savedState = state as SavedState
-
-        // Let our super class process state before we do because we should
-        // depend on our super class, we shouldn't imply that our super class
-        // might need to depend on us.
-        super.onRestoreInstanceState(savedState.superState)
-
-        // Grab our properties out of our SavedState.
-        isDark = savedState.ssIsDark == DARK
-        isManual = savedState.ssIsManual == MANUAL
-
-        // Update our visuals in whatever way we want
-        applyColors()
     }
     /* For state saving END */
 }

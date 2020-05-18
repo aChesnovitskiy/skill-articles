@@ -11,7 +11,6 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import com.google.android.material.shape.MaterialShapeDrawable
-import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.dpToPx
 import ru.skillbranch.skillarticles.ui.custom.behaviors.SubmenuBehavior
 import kotlin.math.hypot
@@ -26,11 +25,32 @@ class ArticleSubmenu @JvmOverloads constructor(
     private var centerY: Float = context.dpToPx(96)
 
     init {
-        View.inflate(context, R.layout.layout_submenu, this)
+        requestLayout()
+//        View.inflate(context, R.layout.layout_submenu, this)
         //add material bg for handle elevation and color surface
         val materialBg = MaterialShapeDrawable.createWithElevationOverlay(context)
         materialBg.elevation = elevation
         background = materialBg
+    }
+
+    override fun getBehavior(): CoordinatorLayout.Behavior<ArticleSubmenu> {
+        return SubmenuBehavior()
+    }
+
+    //save state
+    override fun onSaveInstanceState(): Parcelable? {
+        val savedState = SavedState(super.onSaveInstanceState())
+        savedState.ssIsOpen = isOpen
+        return savedState
+    }
+
+    //restore state
+    override fun onRestoreInstanceState(state: Parcelable) {
+        super.onRestoreInstanceState(state)
+        if (state is SavedState) {
+            isOpen = state.ssIsOpen
+            visibility = if (isOpen) View.VISIBLE else View.GONE
+        }
     }
 
     fun open() {
@@ -75,22 +95,6 @@ class ArticleSubmenu @JvmOverloads constructor(
         anim.start()
     }
 
-    //save state
-    override fun onSaveInstanceState(): Parcelable? {
-        val savedState = SavedState(super.onSaveInstanceState())
-        savedState.ssIsOpen = isOpen
-        return savedState
-    }
-
-    //restore state
-    override fun onRestoreInstanceState(state: Parcelable) {
-        super.onRestoreInstanceState(state)
-        if (state is SavedState) {
-            isOpen = state.ssIsOpen
-            visibility = if (isOpen) View.VISIBLE else View.GONE
-        }
-    }
-
     private class SavedState : BaseSavedState, Parcelable {
         var ssIsOpen: Boolean = false
 
@@ -112,9 +116,4 @@ class ArticleSubmenu @JvmOverloads constructor(
             override fun newArray(size: Int): Array<SavedState?> = arrayOfNulls(size)
         }
     }
-
-    override fun getBehavior(): CoordinatorLayout.Behavior<*> {
-        return SubmenuBehavior()
-    }
-
 }
