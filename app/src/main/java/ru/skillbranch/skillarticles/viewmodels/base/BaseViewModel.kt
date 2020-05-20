@@ -6,7 +6,6 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.*
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
-import ru.skillbranch.skillarticles.viewmodels.ArticleViewModel
 
 abstract class BaseViewModel<T : IViewModelState>(
     private val handleState: SavedStateHandle,

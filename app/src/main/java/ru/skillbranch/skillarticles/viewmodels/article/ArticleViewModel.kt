@@ -1,7 +1,5 @@
-package ru.skillbranch.skillarticles.viewmodels
+package ru.skillbranch.skillarticles.viewmodels.article
 
-import android.os.Bundle
-import androidx.core.os.bundleOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import ru.skillbranch.skillarticles.data.ArticleData
@@ -12,8 +10,8 @@ import ru.skillbranch.skillarticles.extensions.data.toAppSettings
 import ru.skillbranch.skillarticles.extensions.data.toArticlePersonalInfo
 import ru.skillbranch.skillarticles.extensions.format
 import ru.skillbranch.skillarticles.extensions.indexesOf
-import ru.skillbranch.skillarticles.data.repositories.MarkdownParser
 import ru.skillbranch.skillarticles.data.repositories.clearContent
+import ru.skillbranch.skillarticles.viewmodels.IArticleViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.BaseViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
 import ru.skillbranch.skillarticles.viewmodels.base.Notify
@@ -23,10 +21,9 @@ class ArticleViewModel(
     private val articleId: String
 ) : BaseViewModel<ArticleState>(
     handle,
-    ArticleState()
+        ArticleState()
 ), IArticleViewModel {
     private val repository = ArticleRepository
-    private var menuIsShown = false
     private var clearContent: String? = null
 
     init {
@@ -133,9 +130,7 @@ class ArticleViewModel(
 
     // Session state
     override fun handleToggleMenu() {
-        updateState { state ->
-            state.copy(isShowMenu = !state.isShowMenu).also { menuIsShown = !state.isShowMenu }
-        }
+        updateState { it.copy(isShowMenu = !it.isShowMenu) }
     }
 
     override fun handleSearchMode(isSearch: Boolean) {
@@ -154,19 +149,19 @@ class ArticleViewModel(
         updateState { it.copy(searchQuery = query, searchResults = result, searchPosition = 0) }
     }
 
-    fun handleUpResult() {
+    override fun handleUpResult() {
         updateState { it.copy(searchPosition = it.searchPosition.dec()) }
     }
 
-    fun handleDownResult() {
+    override fun handleDownResult() {
         updateState { it.copy(searchPosition = it.searchPosition.inc()) }
     }
 
-    fun handleCopyCode() {
+    override fun handleCopyCode() {
         notify(Notify.TextMessage("Code was copied to clipboard"))
     }
 
-    fun handleSendComment() {
+    override fun handleSendComment() {
         if (!currentState.isAuth) navigate(NavigationCommand.startLogin())
         // TODO send comment
     }
