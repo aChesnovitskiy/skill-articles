@@ -10,6 +10,7 @@ abstract class Binding {
     var isInflated = false
 
     open val afterInflated: (() -> Unit)? = null
+
     fun onFinishInflate() {
         if (!isInflated) {
             afterInflated?.invoke()

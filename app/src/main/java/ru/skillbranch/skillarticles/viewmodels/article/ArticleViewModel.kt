@@ -21,7 +21,7 @@ class ArticleViewModel(
     private val articleId: String
 ) : BaseViewModel<ArticleState>(
     handle,
-        ArticleState()
+    ArticleState()
 ), IArticleViewModel {
     private val repository = ArticleRepository
     private var clearContent: String? = null
