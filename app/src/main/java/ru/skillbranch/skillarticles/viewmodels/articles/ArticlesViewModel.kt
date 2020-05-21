@@ -10,11 +10,11 @@ class ArticlesViewModel(handle: SavedStateHandle) : BaseViewModel<ArticlesState>
     val repository = ArticlesRepository
 
     init {
-        subscribeOnDataSource(repository.loadArticles()){ articles, state ->
+        subscribeOnDataSource(repository.loadArticles()) { articles, state ->
             articles ?: return@subscribeOnDataSource null
             state.copy(articles = articles)
         }
     }
 }
 
-data class ArticlesState(val articles: List<ArticleItemData> = emptyList()): IViewModelState
+data class ArticlesState(val articles: List<ArticleItemData> = emptyList()) : IViewModelState

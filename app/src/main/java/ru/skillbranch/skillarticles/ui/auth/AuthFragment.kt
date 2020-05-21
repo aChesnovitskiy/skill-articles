@@ -10,6 +10,7 @@ import ru.skillbranch.skillarticles.extensions.attrValue
 import ru.skillbranch.skillarticles.ui.base.BaseFragment
 import ru.skillbranch.skillarticles.viewmodels.base.NavigationCommand
 import ru.skillbranch.skillarticles.ui.custom.spans.UnderlineSpan
+import ru.skillbranch.skillarticles.viewmodels.auth.AuthViewModel
 
 class AuthFragment : BaseFragment<AuthViewModel> {
     override val viewModel: AuthViewModel by viewModels()
