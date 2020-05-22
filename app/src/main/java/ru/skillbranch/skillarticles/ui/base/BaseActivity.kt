@@ -213,8 +213,8 @@ class BottombarBuilder() {
         //remove temp views
         if (tempViews.isNotEmpty()) {
             tempViews.forEach {
-                val view = context.container.findViewById<View>(it)
-                context.container.removeView(view)
+                val view = context.coordinator_container.findViewById<View>(it)
+                context.coordinator_container.removeView(view)
             }
             tempViews.clear()
         }
@@ -223,8 +223,8 @@ class BottombarBuilder() {
         if (views.isNotEmpty()) {
             val inflater = LayoutInflater.from(context)
             views.forEach {
-                val view = inflater.inflate(it, context.container, false)
-                context.container.addView(view)
+                val view = inflater.inflate(it, context.coordinator_container, false)
+                context.coordinator_container.addView(view)
                 tempViews.add(view.id)
             }
         }
