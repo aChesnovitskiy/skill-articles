@@ -31,7 +31,6 @@ class ArticlesAdapter(private val listener: (ArticleItemData) -> Unit) :
     override fun onBindViewHolder(holder: ArticleVH, position: Int) {
         holder.bind(getItem(position), listener)
     }
-
 }
 
 class ArticleDiffCallback : DiffUtil.ItemCallback<ArticleItemData>() {

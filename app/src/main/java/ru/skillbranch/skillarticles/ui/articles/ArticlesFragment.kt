@@ -24,14 +24,14 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
         Log.d("ArticlesFragment", "Click on article: ${item.id}")
 
         val action = ArticlesFragmentDirections.actionNavArticlesToPageArticle(
-                item.id,
-                item.author,
-                item.authorAvatar,
-                item.category,
-                item.categoryIcon,
-                item.date,
-                item.poster,
-                item.title
+            item.id,
+            item.author,
+            item.authorAvatar,
+            item.category,
+            item.categoryIcon,
+            item.poster,
+            item.title,
+            item.date
         )
 
         viewModel.navigate(NavigationCommand.To(action.actionId, action.arguments))

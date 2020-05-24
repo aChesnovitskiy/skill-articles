@@ -36,7 +36,6 @@ abstract class BaseActivity<T : BaseViewModel<out IViewModelState>> : AppCompatA
 
     //set listeners, tuning views
     abstract fun subscribeOnState(state: IViewModelState)
-
     abstract fun renderNotification(notify: Notify)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,6 +59,7 @@ abstract class BaseActivity<T : BaseViewModel<out IViewModelState>> : AppCompatA
         viewModel.restoreState()
     }
 
+    // For correct navigation work of up/back button
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
@@ -90,7 +90,7 @@ abstract class BaseActivity<T : BaseViewModel<out IViewModelState>> : AppCompatA
     }
 }
 
-class ToolbarBuilder() {
+class ToolbarBuilder {
     var title: String? = null
     var subtitle: String? = null
     var logo: String? = null
@@ -137,7 +137,6 @@ class ToolbarBuilder() {
     }
 
     fun build(context: FragmentActivity) {
-
         //show appbar if hidden due to scroll behavior
         context.appbar.setExpanded(true, true)
 
@@ -213,8 +212,8 @@ class BottombarBuilder() {
         //remove temp views
         if (tempViews.isNotEmpty()) {
             tempViews.forEach {
-                val view = context.coordinator_container.findViewById<View>(it)
-                context.coordinator_container.removeView(view)
+                val view = context.container.findViewById<View>(it)
+                context.container.removeView(view)
             }
             tempViews.clear()
         }
@@ -223,8 +222,8 @@ class BottombarBuilder() {
         if (views.isNotEmpty()) {
             val inflater = LayoutInflater.from(context)
             views.forEach {
-                val view = inflater.inflate(it, context.coordinator_container, false)
-                context.coordinator_container.addView(view)
+                val view = inflater.inflate(it, context.container, false)
+                context.container.addView(view)
                 tempViews.add(view.id)
             }
         }
