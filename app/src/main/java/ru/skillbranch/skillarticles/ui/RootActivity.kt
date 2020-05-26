@@ -16,7 +16,7 @@ import ru.skillbranch.skillarticles.viewmodels.base.Notify
 
 class RootActivity : BaseActivity<RootViewModel>() {
     override val layout: Int = R.layout.activity_root
-    override val viewModel: RootViewModel by viewModels()
+    public override val viewModel: RootViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +40,7 @@ class RootActivity : BaseActivity<RootViewModel>() {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             // If destination change set select bottom navigation item
-            nav_view.selectDestination(destination)
+            nav_view.selectDestination(destination) // TODO hometask extention function, подсветить элемент боттомбара, если на нем находимся
         }
     }
 

@@ -155,7 +155,7 @@ sealed class Notify {
     ) : Notify()
 }
 
-sealed class NavigationCommand() {
+sealed class NavigationCommand {
     data class To(
         val destination: Int,
         val args: Bundle? = null,

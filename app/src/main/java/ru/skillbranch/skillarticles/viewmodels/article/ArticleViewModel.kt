@@ -150,20 +150,20 @@ class ArticleViewModel(
         updateState { it.copy(searchQuery = query, searchResults = result, searchPosition = 0) }
     }
 
-    override fun handleUpResult() {
+    fun handleUpResult() {
         updateState { it.copy(searchPosition = it.searchPosition.dec()) }
     }
 
-    override fun handleDownResult() {
+    fun handleDownResult() {
         updateState { it.copy(searchPosition = it.searchPosition.inc()) }
     }
 
-    override fun handleCopyCode() {
+    fun handleCopyCode() {
         notify(Notify.TextMessage("Code was copied to clipboard"))
     }
 
-    override fun handleSendComment() {
-        if (!currentState.isAuth) navigate(NavigationCommand.startLogin())
+    fun  handleSendComment() {
+        if (!currentState.isAuth) navigate(NavigationCommand.StartLogin())
         // TODO send comment
     }
 }

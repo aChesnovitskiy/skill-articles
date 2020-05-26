@@ -35,6 +35,7 @@ class ContainerBehavior() : AppBarLayout.ScrollingViewBehavior() {
                     View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY),
                     heightUsed
             )
+            return true
         }
         // If scrolling, measure parent
         return super.onMeasureChild(parent, child, parentWidthMeasureSpec, widthUsed, parentHeightMeasureSpec, heightUsed)
