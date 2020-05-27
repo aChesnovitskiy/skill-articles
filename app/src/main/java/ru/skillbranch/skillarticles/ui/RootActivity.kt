@@ -40,7 +40,7 @@ class RootActivity : BaseActivity<RootViewModel>() {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             // If destination change set select bottom navigation item
-            nav_view.selectDestination(destination) // TODO hometask extention function, подсветить элемент боттомбара, если на нем находимся
+//            nav_view.selectDestination(destination) // TODO hometask extention function, подсветить элемент боттомбара, если на нем находимся
         }
     }
 
