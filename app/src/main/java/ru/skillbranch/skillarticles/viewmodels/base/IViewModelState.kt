@@ -1,8 +1,10 @@
 package ru.skillbranch.skillarticles.viewmodels.base
 
-import android.os.Bundle
 import androidx.lifecycle.SavedStateHandle
 
+/**
+ * Interface for saving and restoring state of ViewModel in bundle
+ */
 interface IViewModelState {
     /**
      * Override this if need to save state in bundle

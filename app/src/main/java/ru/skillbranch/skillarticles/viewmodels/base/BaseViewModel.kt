@@ -51,8 +51,7 @@ abstract class BaseViewModel<T : IViewModelState>(
      */
     @UiThread
     protected fun notify(content: Notify) {
-        notifications.value =
-            Event(content)
+        notifications.value = Event(content)
     }
 
     open fun navigate(command: NavigationCommand) {
@@ -96,10 +95,16 @@ abstract class BaseViewModel<T : IViewModelState>(
         }
     }
 
+    /**
+     * Save state in bundle
+     */
     fun saveState() {
         currentState.save(handleState)
     }
 
+    /**
+     * Restore state from bundle
+     */
     @Suppress("UNCHECKED_CAST")
     fun restoreState() {
         state.value = currentState.restore(handleState) as T
@@ -124,8 +129,8 @@ class Event<out E>(private val content: E) {
 }
 
 /***
- * в качестве аргумента конструктора принимает лямбда выражение обработчик в аргумент которой передается
- * необработанное ранее событие получаемое в реализации метода Observer`a onChanged
+ * в качестве аргумента конструктора принимает лямбда выражение обработчик, в аргумент которой передается
+ * необработанное ранее событие, получаемое в реализации метода Observer`a onChanged
  */
 class EventObserver<E>(private val onEventUnhandledContent: (E) -> Unit) : Observer<Event<E>> {
     override fun onChanged(event: Event<E>?) {
