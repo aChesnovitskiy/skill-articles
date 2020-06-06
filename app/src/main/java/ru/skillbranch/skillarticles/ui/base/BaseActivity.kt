@@ -208,7 +208,6 @@ class BottombarBuilder() {
     }
 
     fun build(context: FragmentActivity) {
-
         //remove temp views
         if (tempViews.isNotEmpty()) {
             tempViews.forEach {

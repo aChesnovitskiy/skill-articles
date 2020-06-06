@@ -2,10 +2,15 @@ package ru.skillbranch.skillarticles.extensions
 
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.IdRes
+import androidx.core.view.iterator
 import androidx.core.view.marginBottom
 import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
 import androidx.core.view.marginTop
+import androidx.navigation.NavDestination
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import ru.skillbranch.skillarticles.R
 
 fun View.setMarginOptionally(
     left: Int = marginLeft,
@@ -26,3 +31,24 @@ fun View.setPaddingOptionally(
 ) {
     setPadding(left, top, right, bottom)
 }
+
+fun BottomNavigationView.selectDestination(destination: NavDestination) {
+    for (menuItem in menu.iterator()) {
+        if (menuItem.itemId == destination.id) menuItem.isChecked = true
+    }
+
+    // TODO delete if not need
+//    for (item in menu.iterator()) {
+//        if (matchDestination(destination, item.itemId)) {
+//            item.isChecked = true
+//        }
+//    }
+}
+
+//fun matchDestination(destination: NavDestination, @IdRes destId: Int) : Boolean{
+//    var currentDestination: NavDestination? = destination
+//    while (currentDestination!!.id != destId && currentDestination.parent != null) {
+//        currentDestination = currentDestination.parent
+//    }
+//    return currentDestination.id == destId
+//}
