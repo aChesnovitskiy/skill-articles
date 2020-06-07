@@ -47,7 +47,6 @@ class ArticleItemView constructor(
     private val grayColor = context.getColor(R.color.color_gray)
     private val primaryColor = context.attrValue(R.attr.colorPrimary)
 
-
     init {
         setPadding(defaultPadding)
         tv_date = TextView(context).apply {
@@ -133,7 +132,6 @@ class ArticleItemView constructor(
         addView(iv_bookmark)
     }
 
-
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         var usedHeight = paddingTop
         val width = getDefaultSize(suggestedMinimumWidth, widthMeasureSpec)
@@ -162,7 +160,6 @@ class ArticleItemView constructor(
         setMeasuredDimension(width, usedHeight)
     }
 
-
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         Log.e("MarkdownContentView", "onLayout: ")
         var usedHeight = paddingTop
@@ -176,74 +173,92 @@ class ArticleItemView constructor(
             left + tv_date.measuredWidth,
             usedHeight + tv_date.measuredHeight
         )
+
         left = tv_date.right + defaultPadding
+
         tv_author.layout(
             left,
             usedHeight,
             left + tv_author.measuredWidth,
             usedHeight + tv_author.measuredHeight
         )
+
         usedHeight += tv_author.measuredHeight + defaultSpace
         left = paddingLeft
 
         val rh = posterSize + categorySize / 2
-        if (rh > tv_title.height) {
-            val diffH = (rh - tv_title.height) / 2
+
+        if (rh > tv_title.measuredHeight) {
+            val diffH = (rh - tv_title.measuredHeight) / 2
+            Log.e("ArticleItemView", "diff $diffH : $usedHeight $rh ${tv_title.measuredHeight}")
+
             tv_title.layout(
                 left,
                 usedHeight + diffH,
                 left + tv_title.measuredWidth,
                 usedHeight + diffH + tv_title.measuredHeight
             )
+
             left = defaultPadding
+
             iv_poster.layout(
                 left + bodyWidth - posterSize,
                 usedHeight,
                 left + bodyWidth,
                 usedHeight + posterSize
             )
+
             iv_category.layout(
                 iv_poster.left - categorySize / 2,
                 iv_poster.bottom - categorySize / 2,
                 iv_poster.left + categorySize / 2,
                 iv_poster.bottom + categorySize / 2
             )
+
             usedHeight += rh
         } else {
-            val diffH = (tv_title.height - rh) / 2
-            Log.e("ArticleItemView", "diff $diffH : $usedHeight ${tv_title.height} ${rh}")
+            val diffH = (tv_title.measuredHeight - rh) / 2
+            Log.e("ArticleItemView", "diff $diffH : $usedHeight ${tv_title.measuredHeight} $rh")
+
             tv_title.layout(
                 left,
                 usedHeight,
                 left + tv_title.measuredWidth,
                 usedHeight + tv_title.measuredHeight
             )
+
             iv_poster.layout(
                 left + bodyWidth - posterSize,
                 usedHeight + diffH,
                 left + bodyWidth,
                 usedHeight + diffH + posterSize
             )
+
             iv_category.layout(
                 iv_poster.left - categorySize / 2,
                 iv_poster.bottom - categorySize / 2,
                 iv_poster.left + categorySize / 2,
                 iv_poster.bottom + categorySize / 2
             )
+
             usedHeight += tv_title.measuredHeight
         }
+
         left = defaultPadding
         usedHeight += defaultSpace
+
         tv_description.layout(
             left,
             usedHeight,
             left + bodyWidth,
             usedHeight + tv_description.measuredHeight
         )
+
         usedHeight += tv_description.measuredHeight + defaultSpace
 
-        val fontDiff = iconSize - tv_likes_count.height
+        val fontDiff = iconSize - tv_likes_count.measuredHeight
         Log.e("ArticleItemView", "fontDiff: $fontDiff")
+
         iv_likes.layout(
             left,
             usedHeight - fontDiff,
@@ -252,12 +267,14 @@ class ArticleItemView constructor(
         )
 
         left = iv_likes.right + defaultSpace
+
         tv_likes_count.layout(
             left,
             usedHeight,
             left + tv_likes_count.measuredWidth,
             usedHeight + tv_likes_count.measuredHeight
         )
+
         left = tv_likes_count.right + defaultPadding
 
         iv_comments.layout(
@@ -266,14 +283,18 @@ class ArticleItemView constructor(
             left + iconSize,
             usedHeight + iconSize - fontDiff
         )
+
         left = iv_comments.right + defaultSpace
+
         tv_comments_count.layout(
             left,
             usedHeight,
             left + tv_comments_count.measuredWidth,
             usedHeight + tv_comments_count.measuredHeight
         )
+
         left = tv_comments_count.right + defaultPadding
+
         tv_read_duration.layout(
             left,
             usedHeight,
@@ -282,6 +303,7 @@ class ArticleItemView constructor(
         )
 
         left = defaultPadding
+
         iv_bookmark.layout(
             left + bodyWidth - iconSize,
             usedHeight - fontDiff,
