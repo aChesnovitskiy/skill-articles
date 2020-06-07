@@ -9,13 +9,16 @@ import kotlinx.android.synthetic.main.activity_root.*
 import kotlinx.android.synthetic.main.layout_bottombar.*
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.selectDestination
+import ru.skillbranch.skillarticles.extensions.selectItem
 import ru.skillbranch.skillarticles.ui.base.BaseActivity
+import ru.skillbranch.skillarticles.viewmodels.RootState
 import ru.skillbranch.skillarticles.viewmodels.RootViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
 import ru.skillbranch.skillarticles.viewmodels.base.NavigationCommand
 import ru.skillbranch.skillarticles.viewmodels.base.Notify
 
 class RootActivity : BaseActivity<RootViewModel>() {
+    var isAuth: Boolean = false
     override val layout: Int = R.layout.activity_root
     public override val viewModel: RootViewModel by viewModels()
 
@@ -23,12 +26,12 @@ class RootActivity : BaseActivity<RootViewModel>() {
         super.onCreate(savedInstanceState)
         // Top level destination
         val appBarConfiguration = AppBarConfiguration(
-                setOf(
-                        R.id.nav_articles,
-                        R.id.nav_bookmarks,
-                        R.id.nav_transcriptions,
-                        R.id.nav_profile
-                )
+            setOf(
+                R.id.nav_articles,
+                R.id.nav_bookmarks,
+                R.id.nav_transcriptions,
+                R.id.nav_profile
+            )
         )
 
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -39,9 +42,18 @@ class RootActivity : BaseActivity<RootViewModel>() {
             true
         }
 
-        navController.addOnDestinationChangedListener { _, destination, _ ->
+        navController.addOnDestinationChangedListener { controller, destination, arguments ->
             // If destination change set select bottom navigation item
             nav_view.selectDestination(destination)
+
+            if (destination.id == R.id.nav_auth) nav_view.selectItem(arguments?.get("private_destination") as Int?)
+
+            // Remove AuthFragment form backstack
+            if (isAuth && destination.id == R.id.nav_auth) {
+                controller.popBackStack()
+                val private = arguments?.get("private_destination") as Int?
+                if (private != null) controller.navigate(private)
+            }
         }
     }
 
@@ -76,6 +88,7 @@ class RootActivity : BaseActivity<RootViewModel>() {
     }
 
     override fun subscribeOnState(state: IViewModelState) {
-        // DO something with state
+        state as RootState
+        isAuth = state.isAuth
     }
 }

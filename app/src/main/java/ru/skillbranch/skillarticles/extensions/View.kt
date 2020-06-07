@@ -52,3 +52,13 @@ fun BottomNavigationView.selectDestination(destination: NavDestination) {
 //    }
 //    return currentDestination.id == destId
 //}
+
+fun BottomNavigationView.selectItem(itemId: Int?){
+    itemId?: return
+    for (item in menu.iterator()) {
+        if(item.itemId == itemId) {
+            item.isChecked = true
+            break
+        }
+    }
+}
