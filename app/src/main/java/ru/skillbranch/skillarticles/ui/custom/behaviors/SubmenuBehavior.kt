@@ -27,7 +27,7 @@ class SubmenuBehavior : CoordinatorLayout.Behavior<ArticleSubmenu>() {
 
     private fun animate(child: ArticleSubmenu, dependency: Bottombar) {
         // Calculate the ratio between height and width
-        val fraction = dependency.translationY / dependency.minHeight
+        val fraction = dependency.translationY / dependency.height
 
         // Set translationX (horizontal location of this view relative to its left position)
         child.translationX = (child.width + child.marginRight) * fraction
