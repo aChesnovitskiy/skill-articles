@@ -36,22 +36,7 @@ fun BottomNavigationView.selectDestination(destination: NavDestination) {
     for (menuItem in menu.iterator()) {
         if (menuItem.itemId == destination.id) menuItem.isChecked = true
     }
-
-    // TODO delete if not need
-//    for (item in menu.iterator()) {
-//        if (matchDestination(destination, item.itemId)) {
-//            item.isChecked = true
-//        }
-//    }
 }
-
-//fun matchDestination(destination: NavDestination, @IdRes destId: Int) : Boolean{
-//    var currentDestination: NavDestination? = destination
-//    while (currentDestination!!.id != destId && currentDestination.parent != null) {
-//        currentDestination = currentDestination.parent
-//    }
-//    return currentDestination.id == destId
-//}
 
 fun BottomNavigationView.selectItem(itemId: Int?){
     itemId?: return
