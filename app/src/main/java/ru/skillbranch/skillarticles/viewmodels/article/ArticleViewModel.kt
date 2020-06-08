@@ -137,6 +137,7 @@ class ArticleViewModel(
         updateState { it.copy(isSearch = isSearch, isShowMenu = false, searchPosition = 0) }
     }
 
+    // FIXME search doesn't work
     override fun handleSearch(query: String?) {
         query ?: return
         if (clearContent == null && currentState.content.isNotEmpty()) clearContent =
