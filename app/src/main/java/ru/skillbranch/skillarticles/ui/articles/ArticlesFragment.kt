@@ -97,6 +97,11 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
                 return true
             }
         })
+
+        searchView.setOnCloseListener {
+            viewModel.handleSearchMode(false)
+            true
+        }
     }
 
     override fun setupViews() {
