@@ -61,7 +61,7 @@ class ArticlesViewModel(handle: SavedStateHandle) : BaseViewModel<ArticlesState>
             .build()
     }
 
-    private fun itemAtEndHandle() {
+    private fun itemAtEndHandle(lastLoadArticle: ArticleItemData) {
         Log.e("ArticlesViewModel", "itemEndHandle: ")
 
         viewModelScope.launch(Dispatchers.IO) {

@@ -59,7 +59,7 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
                 .setLogo(args.categoryIcon)
                 .addMenuItem(
                         MenuItemHolder(
-                                "search",
+                                "Search",
                                 R.id.action_search,
                                 R.drawable.ic_search_24dp,
                                 R.layout.search_view_layout
@@ -134,7 +134,7 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
         val menuItem = menu.findItem(R.id.action_search)
-        val searchView = (menuItem?.actionView as SearchView)
+        val searchView = menuItem?.actionView as SearchView
         searchView.queryHint = getString(R.string.article_search_placeholder)
 
         // Restore SearchView
@@ -148,12 +148,12 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
 
         menuItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
-                viewModel.handleSearchMode(false)
+                viewModel.handleSearchMode(true)
                 return true
             }
 
             override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
-                viewModel.handleSearchMode(true)
+                viewModel.handleSearchMode(false)
                 return true
             }
         })
