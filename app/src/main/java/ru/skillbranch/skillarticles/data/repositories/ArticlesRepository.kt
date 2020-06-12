@@ -15,14 +15,14 @@ object ArticlesRepository {
     fun allArticles(): ArticlesDataFactory =
         ArticlesDataFactory(ArticleStrategy.AllArticles(::findArticlesByRange))
 
-    fun searchArticles(searchQuery: String): ArticlesDataFactory =
-        ArticlesDataFactory(ArticleStrategy.SearchArticle(::findArticlesByTitle, searchQuery))
+    fun searchArticles(searchQuery: String) =
+        ArticlesDataFactory(ArticleStrategy.SearchArticle(::searchArticlesByTitle, searchQuery))
 
     private fun findArticlesByRange(start: Int, size: Int) = local.localArticleItems
         .drop(start)
         .take(size)
 
-    private fun findArticlesByTitle(start: Int, size: Int, queryTitle: String) = local.localArticleItems
+    private fun searchArticlesByTitle(start: Int, size: Int, queryTitle: String) = local.localArticleItems
         .asSequence()
         .filter { it.title.contains(queryTitle, true) }
         .drop(start)
@@ -64,7 +64,7 @@ class ArticleDataSource(private val strategy: ArticleStrategy) : PositionalDataS
     }
 }
 
-sealed class ArticleStrategy() {
+sealed class ArticleStrategy {
     abstract fun getItems(start: Int, size: Int): List<ArticleItemData>
 
     class AllArticles(

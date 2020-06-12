@@ -132,11 +132,11 @@ class ArticlesBoundaryCallback(
 ) : PagedList.BoundaryCallback<ArticleItemData>() {
     override fun onZeroItemsLoaded() {
         // Storage is empty
-        zeroLoadingHandle
+        zeroLoadingHandle()
     }
 
     override fun onItemAtEndLoaded(itemAtEnd: ArticleItemData) {
-        // User scroll down -> need load more items
+        // User scrolls down -> need load more items
         itemAtEndHandle(itemAtEnd)
     }
 }

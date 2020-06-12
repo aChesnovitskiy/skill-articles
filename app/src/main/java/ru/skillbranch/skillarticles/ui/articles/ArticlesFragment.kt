@@ -38,7 +38,7 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
     }
 
     private val articlesAdapter = ArticlesAdapter { item ->
-        Log.d("ArticlesFragment", "Click on article: ${item.id}")
+        Log.e("ArticlesFragment", "Click on article: ${item.id}")
 
         val action = ArticlesFragmentDirections.actionNavArticlesToPageArticle(
             item.id,

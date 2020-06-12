@@ -15,12 +15,12 @@ object LocalDataHolder {
     private val articleInfo = MutableLiveData<ArticlePersonalInfo?>(null)
     private val settings = MutableLiveData(AppSettings())
     private val isAuth = MutableLiveData(false)
-    val localArticleItems: MutableList<ArticleItemData> = generateArticleItems(200) as MutableList<ArticleItemData>
+    val localArticleItems: MutableList<ArticleItemData> = mutableListOf()
     val localArticles: MutableMap<String, MutableLiveData<ArticleData>> = mutableMapOf()
 
     fun findArticle(articleId: String): LiveData<ArticleData?> {
         if (localArticles[articleId] == null) {
-            Log.e("DataHolder", "findArticle $articleId: ")
+            Log.e("DataHolder", "findArticle $articleId: ");
             val article = localArticleItems.find { it.id == articleId }
             localArticles[articleId] = MutableLiveData(EntityGenerator.generateArticle(article ?: EntityGenerator.createArticleItem(articleId)))
         }
@@ -98,8 +98,3 @@ object NetworkDataHolder {
         )
     }
 }
-
-
-
-
-
