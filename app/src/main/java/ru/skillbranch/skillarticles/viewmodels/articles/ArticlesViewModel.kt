@@ -19,7 +19,6 @@ import ru.skillbranch.skillarticles.data.repositories.ArticlesRepository
 import ru.skillbranch.skillarticles.viewmodels.base.BaseViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
 import ru.skillbranch.skillarticles.viewmodels.base.Notify
-import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
 class ArticlesViewModel(handle: SavedStateHandle) : BaseViewModel<ArticlesState>(handle, ArticlesState()) {
@@ -108,6 +107,11 @@ class ArticlesViewModel(handle: SavedStateHandle) : BaseViewModel<ArticlesState>
                 )
             }
         }
+    }
+
+    fun handleToggleBookmark(id: String, isBookmark: Boolean) {
+        repository.updateBookmark(id, !isBookmark)
+        listData.value?.dataSource?.invalidate()
     }
 
     fun handleSearch(query: String?) {

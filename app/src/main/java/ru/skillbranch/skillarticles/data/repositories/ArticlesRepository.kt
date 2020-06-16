@@ -38,6 +38,12 @@ object ArticlesRepository {
         local.localArticleItems.addAll(articles)
             .apply { sleep(100) }
     }
+
+    fun updateBookmark(id: String, isBookmark: Boolean) {
+        val item = local.localArticleItems.find { it.id == id }
+        val index = local.localArticleItems.indexOf(item)
+        local.localArticleItems[index] = item!!.copy(isBookmark = isBookmark)
+    }
 }
 
 class ArticlesDataFactory(val strategy: ArticleStrategy) : DataSource.Factory<Int, ArticleItemData>() {
