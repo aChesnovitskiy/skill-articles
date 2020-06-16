@@ -2,11 +2,10 @@ package ru.skillbranch.skillarticles.ui.articles
 
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
 import ru.skillbranch.skillarticles.data.models.ArticleItemData
 import ru.skillbranch.skillarticles.ui.custom.ArticleItemView
 
@@ -28,10 +27,12 @@ class ArticleDiffCallback : DiffUtil.ItemCallback<ArticleItemData>() {
     override fun areContentsTheSame(oldItem: ArticleItemData, newItem: ArticleItemData): Boolean = oldItem == newItem
 }
 
-class ArticleVH(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+class ArticleVH(val containerView: View) : RecyclerView.ViewHolder(containerView) {
     fun bind(item: ArticleItemData?, listener: (ArticleItemData) -> Unit) {
         // If use placeholder, item may be null
-        (containerView as ArticleItemView).bind(item!!)
+        (containerView as ArticleItemView).bind(item!!) { id, isBookmark ->
+            // TODO
+        }
         itemView.setOnClickListener { listener(item) }
     }
 }
