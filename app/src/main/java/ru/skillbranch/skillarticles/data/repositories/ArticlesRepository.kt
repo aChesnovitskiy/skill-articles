@@ -29,6 +29,25 @@ object ArticlesRepository {
         .take(size)
         .toList()
 
+    fun bookmarkArticles(): ArticlesDataFactory =
+            ArticlesDataFactory(ArticleStrategy.BookmarkArticles(::findBookmarksByRange))
+
+    fun searchBookmarks(searchQuery: String) =
+            ArticlesDataFactory(ArticleStrategy.SearchBookmark(::searchBookmarksByTitle, searchQuery))
+
+    private fun findBookmarksByRange(start: Int, size: Int) = local.localArticleItems
+            .filter { it.isBookmark }
+            .drop(start)
+            .take(size)
+
+    private fun searchBookmarksByTitle(start: Int, size: Int, queryTitle: String) = local.localArticleItems
+            .filter { it.isBookmark }
+            .asSequence()
+            .filter { it.title.contains(queryTitle, true) }
+            .drop(start)
+            .take(size)
+            .toList()
+
     fun loadArticlesFromNetwork(start: Int, size: Int): List<ArticleItemData> = network.networkArticleItems
         .drop(start)
         .take(size)
@@ -88,5 +107,18 @@ sealed class ArticleStrategy {
             itemProvider(start, size, query)
     }
 
-    // TODO bookmarks strategy
+    class BookmarkArticles(
+            private val itemProvider: (Int, Int) -> List<ArticleItemData>
+    ) : ArticleStrategy() {
+        override fun getItems(start: Int, size: Int): List<ArticleItemData> =
+                itemProvider(start, size)
+    }
+
+    class SearchBookmark(
+            private val itemProvider: (Int, Int, String) -> List<ArticleItemData>,
+            private val query: String
+    ) : ArticleStrategy() {
+        override fun getItems(start: Int, size: Int): List<ArticleItemData> =
+                itemProvider(start, size, query)
+    }
 }

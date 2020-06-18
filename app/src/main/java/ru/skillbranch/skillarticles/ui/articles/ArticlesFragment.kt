@@ -28,31 +28,14 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
 
     override val prepareToolbar: (ToolbarBuilder.() -> Unit) = {
         addMenuItem(
-            MenuItemHolder(
-                "Search",
-                R.id.action_search,
-                R.drawable.ic_search_24dp,
-                R.layout.search_view_layout
-            )
+                MenuItemHolder(
+                        "Search",
+                        R.id.action_search,
+                        R.drawable.ic_search_24dp,
+                        R.layout.search_view_layout
+                )
         )
     }
-
-//    private val articlesAdapter = ArticlesAdapter { item ->
-//        Log.e("ArticlesFragment", "Click on article: ${item.id}")
-//
-//        val action = ArticlesFragmentDirections.actionNavArticlesToPageArticle(
-//            item.id,
-//            item.author,
-//            item.authorAvatar,
-//            item.category,
-//            item.categoryIcon,
-//            item.poster,
-//            item.title,
-//            item.date
-//        )
-//
-//        viewModel.navigate(NavigationCommand.To(action.actionId, action.arguments))
-//    }
 
     private val articlesAdapter = ArticlesAdapter(::onItemClickListener, ::onBookmarkClickListener)
 
