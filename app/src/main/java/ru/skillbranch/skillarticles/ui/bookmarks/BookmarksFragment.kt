@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_bookmarks.rv_bookmarks
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.data.models.ArticleItemData
+import ru.skillbranch.skillarticles.ui.articles.ArticlesAdapter
 import ru.skillbranch.skillarticles.ui.base.BaseFragment
 import ru.skillbranch.skillarticles.ui.base.Binding
 import ru.skillbranch.skillarticles.ui.base.MenuItemHolder
@@ -36,7 +37,7 @@ class BookmarksFragment : BaseFragment<BookmarksViewModel>() {
         )
     }
 
-    private val bookmarksAdapter = BookmarksAdapter(::onItemClickListener, ::onBookmarkClickListener)
+    private val bookmarksAdapter = ArticlesAdapter(::onItemClickListener, ::onBookmarkClickListener)
 
     private fun onItemClickListener(item: ArticleItemData) {
         Log.e("BookmarksFragment", "Click on article: ${item.id}")
