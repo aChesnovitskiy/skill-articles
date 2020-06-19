@@ -48,13 +48,13 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
 
     override val viewModel: ArticleViewModel by viewModels {
         ViewModelFactory(
-            owner = this,
-            params = args.articleId
+                owner = this,
+                params = args.articleId
         )
     }
 
     private val commentsAdapter by lazy {
-        CommentsAdapter{
+        CommentsAdapter {
             Log.e("ArticleFragment", "click on comment: ${it.id} ${it.slug}")
             viewModel.handleReplyTo(it.slug, it.user.name)
             et_comment.requestFocus()
@@ -122,6 +122,18 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
         tv_author.text = args.author
         tv_date.text = args.date.format()
 
+//        if (binding.commentInitital.isNullOrBlank()) {
+//            et_comment.text = null
+//        } else {
+        Log.e("ArticleFragment", "binding.commentInitial: ${binding.commentInitial}")
+        et_comment.setText("binding.commentInitial")
+//        }
+
+        // TODO delete
+//        et_comment.addTextChangedListener {
+//            viewModel.handleChangeComment(it.toString())
+//        }
+
         et_comment.setOnEditorActionListener { view, _, _ ->
             root.hideKeyboard(view)
             viewModel.handleSendComment(view.text.toString())
@@ -139,7 +151,7 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             et_comment.clearFocus()
         }
 
-        with (rv_comments) {
+        with(rv_comments) {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = commentsAdapter
         }
@@ -294,7 +306,9 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             if (it.isNotEmpty()) setupCopyListener()
         }
 
-        private var answerTo by RenderProp("Comment") { wrap_comments.hint = it}
+        var commentInitial: String? = "commentInitial"
+
+        private var answerTo by RenderProp("Comment") { wrap_comments.hint = it }
 
         private var isShowBottombar by RenderProp(true) {
             if (it) bottombar.show() else bottombar.hide()
@@ -345,6 +359,9 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             searchResults = data.searchResults
             answerTo = data.answerTo ?: "Comment"
             isShowBottombar = data.isShowBottomBar
+
+            commentInitial = data.commentInitial
+            Log.e("ArticleFragment", "data.commentInitial: ${data.commentInitial}")
         }
 
         override fun saveUi(outState: Bundle) {
