@@ -190,6 +190,7 @@ class ArticleViewModel(
 
     override fun handleSendComment(comment: String) {
         updateState { it.copy(commentInitial = comment) }
+        saveState()
         Log.e("ArticleViewModel", "Comment send: ${currentState.commentInitial}")
         if (!currentState.isAuth) navigate(NavigationCommand.StartLogin())
         else {
@@ -274,7 +275,7 @@ data class ArticleState(
     override fun restore(savedState: SavedStateHandle): ArticleState {
         // TODO restore state
         return copy(
-                commentInitial = savedState["commentInitial"] ?: "XXXXX",
+                commentInitial = savedState["commentInitial"],
                 isSearch = savedState["isSearch"] ?: false,
                 searchQuery = savedState["searchQuery"],
                 searchResults = savedState["searchResults"] ?: emptyList(),

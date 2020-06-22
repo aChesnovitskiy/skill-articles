@@ -122,18 +122,6 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
         tv_author.text = args.author
         tv_date.text = args.date.format()
 
-//        if (binding.commentInitital.isNullOrBlank()) {
-//            et_comment.text = null
-//        } else {
-        Log.e("ArticleFragment", "binding.commentInitial: ${binding.commentInitial}")
-        et_comment.setText("binding.commentInitial")
-//        }
-
-        // TODO delete
-//        et_comment.addTextChangedListener {
-//            viewModel.handleChangeComment(it.toString())
-//        }
-
         et_comment.setOnEditorActionListener { view, _, _ ->
             root.hideKeyboard(view)
             viewModel.handleSendComment(view.text.toString())
@@ -306,7 +294,14 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             if (it.isNotEmpty()) setupCopyListener()
         }
 
-        var commentInitial: String? = "commentInitial"
+        var commentInitial by RenderProp("") {
+            if (it.isBlank()) {
+                et_comment.text = null
+            } else {
+                Log.e("ArticleFragment", "binding.commentInitial: $it")
+                et_comment.setText(it)
+            }
+        }
 
         private var answerTo by RenderProp("Comment") { wrap_comments.hint = it }
 
@@ -360,7 +355,7 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             answerTo = data.answerTo ?: "Comment"
             isShowBottombar = data.isShowBottomBar
 
-            commentInitial = data.commentInitial
+            commentInitial = data.commentInitial ?: ""
             Log.e("ArticleFragment", "data.commentInitial: ${data.commentInitial}")
         }
 
