@@ -298,7 +298,6 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             if (it.isBlank()) {
                 et_comment.text = null
             } else {
-                Log.e("ArticleFragment", "binding.commentInitial: $it")
                 et_comment.setText(it)
             }
         }
@@ -356,7 +355,6 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             isShowBottombar = data.isShowBottomBar
 
             commentInitial = data.commentInitial ?: ""
-            Log.e("ArticleFragment", "data.commentInitial: ${data.commentInitial}")
         }
 
         override fun saveUi(outState: Bundle) {
